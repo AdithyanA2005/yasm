@@ -157,3 +157,16 @@ function run_script() {
   # Execute the script with the provided arguments
   "$script_path" $args
 }
+
+function show_help() {
+  echo "🛠️ DotScripts - Usage"
+  echo
+  echo "  dts                Launch fuzzy menu to pick a script"
+  echo "  dts run            Pick a script via menu and run it"
+  echo "  dts run <script>   Run a specific script directly"
+  echo "  dts new            Create a new script interactively"
+  echo "  dts help           Show this help message"
+  echo
+  echo "Example:"
+  echo "  dts run backup"
+}

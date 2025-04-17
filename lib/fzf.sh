@@ -28,6 +28,7 @@ function fzf_menu() {
     "3. Update Script"
     "4. Rename Script"
     "5. Delete Script"
+    "6. Show Help"
   )
 
   # Display options using fzf with newline-separated entries
@@ -54,6 +55,9 @@ function fzf_menu() {
   "${options[4]}") # Delete Script
     script_name=$(fzf_list_scripts)
     [ -z "$script_name" ] && echo "No script selected" || delete_script "$script_name"
+    ;;
+  "${options[5]}") # Delete Script
+    show_help
     ;;
   *)
     echo "No action selected."

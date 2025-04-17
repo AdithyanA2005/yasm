@@ -19,6 +19,9 @@ source "$LIB_DIR/utils.sh"
 source "$LIB_DIR/core.sh"
 source "$LIB_DIR/fzf.sh"
 
+# Ensure required directories exist
+mkdir -p "$SCRIPTS_DIR" "$META_DIR"
+
 # MAIN LOGIC
 # This will be the main entry point for the script
 action="$1" # Argument 1 - Run | New

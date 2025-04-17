@@ -4,6 +4,16 @@ function fzf_list_scripts() {
   local choice
   local script_name
 
+  # Ensure that the META_DIR is not empty
+  shopt -s nullglob
+  local toml_files=("$META_DIR"/*.toml)
+  shopt -u nullglob
+
+  if [[ ${#toml_files[@]} -eq 0 ]]; then
+    echo "No scripts found." >&2
+    return 1
+  fi
+
   # Generate list of scripts with descriptions
   choice=$(
     for file in "$META_DIR"/*.toml; do

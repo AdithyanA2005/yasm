@@ -13,51 +13,50 @@ YASM is a modular, metadata-driven script management system built for reuse, cla
 
 ---
 
-## 📁 Folder Structure
-
-```
-~/.dotscripts/
-├── bin/           # Your actual scripts (bash, etc)
-├── meta/          # Metadata for each script (TOML)
-├── lib/           # Core library files (helper functions, fzf UI, etc)
-└── yasm           # Main executable
-```
-
----
-
 ## 🚀 Installation
-
-> In the below example I will use `~/.dotscripts` as the installation directory. You can change it to any directory you prefer. But make sure to update the `PATH` variable accordingly.
 
 ### 1. Clone the Repo
 
 ```bash
-git clone https://github.com/AdithyanA2005/dotscripts ~/.dotscripts
+git clone https://github.com/AdithyanA2005/yasm
+cd yasm
 ```
 
-### 2. Add to PATH
-
-Add the following line to your `~/.bashrc`, `~/.zshrc`, or `~/.config/fish/config.fish`:
-
-#### Bash / Zsh
+### 2. Make the Installer Executable
 
 ```bash
-export PATH="$HOME/.dotscripts:$PATH"
+chmod +x install.sh
 ```
 
-#### Fish
-
-```fish
-set -Ux PATH $HOME/.dotscripts $PATH
-```
-
-### 3. Make Executable
+### 3. Run the Installer
 
 ```bash
-chmod +x ~/.dotscripts/yasm
+./install.sh
 ```
 
-Now you can run `yasm` from anywhere 🎉
+### 4. Add ~/.local/bin to PATH
+
+Depending on your shell, add this line to the appropriate config file:
+
+- **For bash (~/.bashrc):**
+
+  ```bash
+  export PATH="$HOME/.local/bin:$PATH"
+  ```
+
+- **For zsh (~/.zshrc):**
+
+  ```bash
+  export PATH="$HOME/.local/bin:$PATH"
+  ```
+
+- **For fish (~/.config/fish/config.fish):**
+
+  ```bash
+  set -Ux PATH $HOME/.local/bin $PATH
+  ```
+
+After adding, restart your terminal or source the config file.
 
 ---
 
@@ -87,6 +86,23 @@ yasm help
 
 ---
 
+## 🛠️ Configuration
+
+The config file is located at `~/.config/yasm/config`. You can customize the following
+
+```bash
+# Default values
+yasm_scripts_dir=$HOME/.dotscripts/scripts
+yasm_meta_dir=$HOME/.dotscripts/meta
+yasm_editor=$EDITOR # Fallback `nano`
+```
+
+- `yasm_scripts_dir`: Directory in which shell files of scripts are stored
+- `yasm_meta_dir`: Directory in which metadata files of scripts are stored
+- `yasm_editor`: Editor to use for opening scripts and metadata files
+
+---
+
 ## 🧠 Metadata (TOML)
 
 Each script has a corresponding `.toml` file in `meta/` with info like:
@@ -95,7 +111,7 @@ Each script has a corresponding `.toml` file in `meta/` with info like:
 # backup.toml
 description = "Backup a folder to a destination using rsync"
 tags = ["backup", "rsync"]
-usage = "backup.sh <source> <destination>"
+usage = "backup <source> <destination>"
 dependencies = ["rsync"]
 ```
 
@@ -141,9 +157,3 @@ git commit -m "Initial commit"
 ## 🧑‍💻 Author
 
 Made with ❤️ by [Adithyan A](https://github.com/AdithyanA2005)
-
----
-
-## 📜 License
-
-MIT License. You are free to use, modify, and share.

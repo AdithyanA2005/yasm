@@ -1,9 +1,14 @@
 #!/usr/bin/env bash
 
 function create_script() {
-  # Prompt user for a new script name
-  echo -n "󰛿 Enter script name: "
-  read -r name
+  # Try to get name from the first argument
+  name="$1"
+
+  # Prompt user for a new script name if argument was not provided
+  if [[ -z "$name" ]]; then
+    echo -n "󰛿 Enter script name: "
+    read -r name
+  fi
 
   # Exit if no name was not entered
   [[ -z "$name" ]] && echo " No name entered. Script creation cancelled." && return
@@ -161,11 +166,17 @@ function run_script() {
 function show_help() {
   echo "🛠️ DotScripts - Usage"
   echo
-  echo "  dts                Launch fuzzy menu to pick a script"
-  echo "  dts run            Pick a script via menu and run it"
-  echo "  dts run <script>   Run a specific script directly"
-  echo "  dts new            Create a new script interactively"
-  echo "  dts help           Show this help message"
+  echo "  dts                   Launch fuzzy menu"
+  echo "  dts new               Create a new script interactively"
+  echo "  dts help              Show this help message"
+  echo "  dts run               Pick a script via menu and run it"
+  echo "  dts run <script>      Run a specific script directly"
+  echo "  dts update            Pick a script via menu and update it"
+  echo "  dts update <script>   Update a specific script directly"
+  echo "  dts rename            Pick a script via menu and rename it"
+  echo "  dts rename <script>   Rename a specific script directly"
+  echo "  dts delete            Pick a script via menu and delete it"
+  echo "  dts delete <script>   Delete a specific script directly"
   echo
   echo "Example:"
   echo "  dts run backup"

@@ -19,4 +19,53 @@ source "$LIB_DIR/utils.sh"
 source "$LIB_DIR/core.sh"
 source "$LIB_DIR/fzf.sh"
 
-fzf_menu
+# MAIN LOGIC
+# This will be the main entry point for the script
+action="$1" # Argument 1 - Run | New
+script="$2" # Argument 2 - Script name
+
+if [[ -z "$action" ]]; then
+  fzf_menu
+
+elif [[ "$action" == "new" ]]; then
+  create_script "$script"
+
+elif [[ "$action" == "help" ]]; then
+  show_help
+
+elif [[ "$action" == "run" ]]; then
+  if [[ -z "$script" ]]; then
+    selected_script=$(fzf_list_scripts)
+    [[ -z "$selected_script" ]] && echo "No script selected" || run_script "$selected_script"
+  else
+    run_script "$script"
+  fi
+
+elif [[ "$action" == "rename" ]]; then
+  if [[ -z "$script" ]]; then
+    script_name=$(fzf_list_scripts)
+    [[ -z "$script_name" ]] && echo "No script selected" || rename_script "$script_name"
+  else
+    rename_script "$script"
+  fi
+
+elif [[ "$action" == "update" ]]; then
+  if [[ -z "$script" ]]; then
+    script_name=$(fzf_list_scripts)
+    [[ -z "$script_name" ]] && echo "No script selected" || update_script "$script_name"
+  else
+    update_script "$script"
+  fi
+
+elif [[ "$action" == "delete" ]]; then
+  if [[ -z "$script" ]]; then
+    script_name=$(fzf_list_scripts)
+    [[ -z "$script_name" ]] && echo "No script selected" || delete_script "$script_name"
+  else
+    delete_script "$script"
+  fi
+
+else
+  echo " Invalid command: '$action'"
+  echo "Run 'dts help' to see available commands."
+fi

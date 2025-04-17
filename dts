@@ -4,7 +4,6 @@ DOTRUN_PATH="$(realpath "${BASH_SOURCE[0]}")"
 DOTRUN_DIR="$(cd "$(dirname "$DOTRUN_PATH")" && pwd)"
 SCRIPTS_DIR="$DOTRUN_DIR/scripts"
 META_DIR="$DOTRUN_DIR/meta"
-LOG_DIR="$DOTRUN_DIR/logs"
 LIB_DIR="$DOTRUN_DIR/lib"
 
 FZF_OPTS=(

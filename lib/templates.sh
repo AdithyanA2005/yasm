@@ -6,7 +6,6 @@ description = "Add a description here"
 tags = ["add", "tags", "here"]
 usage = "$1.sh <arguments>"
 dependencies = ["add", "dependencies", "here"]
-logfile = "logs/$1-\$(date +'%Y%m%d-%H%M%S').log"
 EOF
 }
 

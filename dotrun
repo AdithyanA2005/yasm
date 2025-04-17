@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+DOTRUN_PATH="$(realpath "${BASH_SOURCE[0]}")"
+DOTRUN_DIR="$(cd "$(dirname "$DOTRUN_PATH")" && pwd)"
+SCRIPTS_DIR="$DOTRUN_DIR/scripts"
+META_DIR="$DOTRUN_DIR/meta"
+LOG_DIR="$DOTRUN_DIR/logs"
+LIB_DIR="$DOTRUN_DIR/lib"
+
+FZF_OPTS=(
+  --height=30%
+  --border=rounded
+  --margin=0,0,1,3
+  --layout=reverse
+  --ansi
+)
+
+source "$LIB_DIR/templates.sh"
+source "$LIB_DIR/utils.sh"
+source "$LIB_DIR/core.sh"
+source "$LIB_DIR/fzf.sh"
+
+fzf_menu

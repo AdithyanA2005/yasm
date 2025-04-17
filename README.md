@@ -1,6 +1,6 @@
-# 🛠️ DotScripts - Script Manager
+# 🛠️ YASM (Yet Another Script Manager)
 
-DotScripts is a modular, metadata-driven script management system built for reuse, clarity, and extensibility. It helps you organize your scripts with proper metadata, provides fuzzy search UI using `fzf`, checks dependencies before running, and can even be backed up easily with `git`.
+YASM is a modular, metadata-driven script management system built for reuse, clarity, and extensibility. It helps you organize your scripts with proper metadata, provides fuzzy search UI using `fzf`, checks dependencies before running, and can even be backed up easily with `git`.
 
 ---
 
@@ -8,11 +8,8 @@ DotScripts is a modular, metadata-driven script management system built for reus
 
 - Organize your scripts with TOML-based metadata
 - Fuzzy search and select using `fzf`
-- Automatic usage display and argument prompts
 - Dependency checking before execution
-- Supports Fish shell completions (auto-generated)
 - Easily git-version your scripts
-- Extendable with your own script templates
 
 ---
 
@@ -22,10 +19,8 @@ DotScripts is a modular, metadata-driven script management system built for reus
 ~/.dotscripts/
 ├── bin/           # Your actual scripts (bash, etc)
 ├── meta/          # Metadata for each script (TOML)
-├── logs/          # Automatically generated logs for each script run
 ├── lib/           # Core library files (helper functions, fzf UI, etc)
-├── completions/   # Auto-generated completions for fish shell
-└── dts            # Main executable
+└── yasm           # Main executable
 ```
 
 ---
@@ -59,32 +54,36 @@ set -Ux PATH $HOME/.dotscripts $PATH
 ### 3. Make Executable
 
 ```bash
-chmod +x ~/.dotscripts/dts
+chmod +x ~/.dotscripts/yasm
 ```
 
-Now you can run `dts` from anywhere 🎉
+Now you can run `yasm` from anywhere 🎉
 
 ---
 
 ## 📄 Usage
 
 ```bash
-dts             # Launch the fuzzy menu
+yasm             # Launch the fuzzy menu
 ```
 
 Or directly run a script:
 
 ```bash
-dts run backup  # Will check for dependencies, prompt for arguments, and run it
+yasm run backup  # Will check for dependencies, prompt for arguments, and run it
 ```
 
 Create a new script:
 
 ```bash
-dts new         # Interactive new script creator
+yasm new         # Interactive new script creator
 ```
 
-Rename or delete scripts via the fuzzy menu.
+Show help menu
+
+```bash
+yasm help
+```
 
 ---
 
@@ -102,7 +101,7 @@ dependencies = ["rsync"]
 
 ---
 
-## ✅ Benefits of Using DotScripts
+## ✅ Benefits of Using YASM
 
 - Keep your script collection clean and organized
 - Quickly find and run scripts using `fzf`

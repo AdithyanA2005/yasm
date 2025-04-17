@@ -1,4 +1,0 @@
-description = "Backup a folder to a destination using rsync"
-tags = ["backup", "rsync"]
-usage = "backup.sh <arguments>"
-dependencies = ["rsync"]

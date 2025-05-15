@@ -346,7 +346,7 @@ function show_help() {
   echo "🛠️ YASM - Usage"
   echo
   echo "  yasm                   Launch fuzzy menu"
-  echo "  yasm new               Create a new script interactively"
+  echo "  yasm create            Create a new script interactively"
   echo "  yasm help              Show this help message"
   echo "  yasm run               Pick a script via menu and run it"
   echo "  yasm run <script>      Run a specific script directly"
@@ -539,7 +539,7 @@ function fzf_menu() {
 #   If an invalid action is provided, it displays an error message with guidance on how to get help.
 #
 #   The available actions are:
-#     - 'new': Creates a new script interactively.
+#     - 'create': Creates a new script interactively.
 #     - 'help': Displays help information.
 #     - 'run': Runs a specified script or prompts the user to select one.
 #     - 'rename': Renames a specified script or prompts the user to select one.
@@ -549,7 +549,7 @@ function fzf_menu() {
 #
 # Example:
 #   handler "run" "backup"       # Runs the 'backup' script.
-#   handler "new"                # Creates a new script interactively.
+#   handler "create"                # Creates a new script interactively.
 #   handler "help"               # Displays help information.
 #   handler "run"                # Prompts the user to select a script to run.
 #   handler "delete" "backup"    # Deletes the 'backup' script.
@@ -564,7 +564,7 @@ function handler() {
   if [[ -z "$action" ]]; then
     fzf_menu
 
-  elif [[ "$action" == "new" ]]; then
+  elif [[ "$action" == "create" ]]; then
     create_script "$value"
 
   elif [[ "$action" == "help" ]]; then

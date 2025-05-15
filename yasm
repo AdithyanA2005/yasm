@@ -147,62 +147,6 @@ function create_script() {
   fi
 }
 
-# rename_script - Renames an existing script and its associated metadata file.
-#
-# Arguments:
-#   $1 - Current name of the script (without .sh extension).
-#
-# Behavior:
-#   - Prompts the user for a new name.
-#   - Validates the new name format (alphanumeric, hyphens, underscores).
-#   - Renames both script and metadata files in their respective directories.
-#   - Updates the 'name' and 'usage' fields inside the metadata file.
-#
-# Output:
-#   - Error messages for invalid input or conflicts.
-#   - Success message upon successful rename.
-#
-# Dependencies:
-#   - Requires $DOT_SCRIPTS_DIR and $DOT_META_DIR to be set.
-#   - Uses `sed` for in-place editing of metadata (BSD-compatible syntax expected).
-function rename_script() {
-  local old_name="$1"
-  local old_script="$DOT_SCRIPTS_DIR/$old_name.sh"
-  local old_meta="$DOT_META_DIR/$old_name.toml"
-
-  # Exit if the old script or metadata file doesn't exist
-  [[ ! -f "$old_script" ]] && echo " Script for '$old_name' not found." && return
-  [[ ! -f "$old_meta" ]] && echo " Metadata for '$old_name' not found." && return
-
-  # Take the new name for  script from user
-  echo -n "󰚰 Enter the new name: "
-  read -r new_name
-
-  # Exit if a new name wasn't entered
-  [[ -z "$new_name" ]] && echo " No new name entered. Rename cancelled." && return
-
-  # Exit if the new name is not valid
-  [[ ! "$new_name" =~ ^[a-zA-Z0-9_-]+$ ]] && echo " Invalid name. Only alphanumeric, hyphens (-), and underscores (_) are allowed." && return
-
-  local new_script="$DOT_SCRIPTS_DIR/$new_name.sh"
-  local new_meta="$DOT_META_DIR/$new_name.toml"
-
-  # Exit if the new script or metadata file already exists
-  [[ -e "$new_script" ]] && echo " Script for $new_name already exists." && return
-  [[ -e "$new_meta" ]] && echo " Metadata for $new_name already exists." && return
-
-  # Rename files
-  mv "$old_script" "$new_script"
-  mv "$old_meta" "$new_meta"
-
-  # Update metadata
-  sed -i '' "s/^name = \".*\"/name = \"$new_name\"/" "$new_meta"
-  sed -i '' "s/^usage = \".*\"/usage = \"$new_name.sh <arguments>\"/" "$new_meta"
-
-  # Show confirmation message
-  echo " Script renamed from '$old_name' to '$new_name'."
-}
-
 # update_script - Opens a script and its metadata for editing.
 #
 # Arguments:
@@ -352,8 +296,6 @@ function show_help() {
   echo "  yasm run <script>      Run a specific script directly"
   echo "  yasm update            Pick a script via menu and update it"
   echo "  yasm update <script>   Update a specific script directly"
-  echo "  yasm rename            Pick a script via menu and rename it"
-  echo "  yasm rename <script>   Rename a specific script directly"
   echo "  yasm delete            Pick a script via menu and delete it"
   echo "  yasm delete <script>   Delete a specific script directly"
   echo "  yasm config            Show available config options"
@@ -456,13 +398,13 @@ function fzf_list_scripts() {
 #
 # Description:
 #   This function presents the user with a menu of actions that can be performed on scripts, such as running,
-#   creating, updating, renaming, or deleting scripts. It uses `fzf` for an interactive selection process.
+#   creating, updating, or deleting scripts. It uses `fzf` for an interactive selection process.
 #   The user can also view the help message for the available options.
 #
 # Behavior:
 #   - The function displays a list of options in the terminal using `fzf`.
 #   - Based on the user's selection, it either runs the appropriate script management function (e.g., `create_script`,
-#     `run_script`, `update_script`, `rename_script`, `delete_script`, or `show_help`).
+#     `run_script`, `update_script`, `delete_script`, or `show_help`).
 #   - It also handles invalid or unselected choices with a fallback message.
 #
 # Output:
@@ -472,7 +414,7 @@ function fzf_list_scripts() {
 #
 # Dependencies:
 #   - Requires `fzf` for displaying the interactive menu.
-#   - Requires functions like `fzf_list_scripts`, `run_script`, `create_script`, `update_script`, `rename_script`,
+#   - Requires functions like `fzf_list_scripts`, `run_script`, `create_script`, `update_script`,
 #     `delete_script`, and `show_help` to handle the selected actions.
 function fzf_menu() {
   local choice
@@ -480,11 +422,10 @@ function fzf_menu() {
     "1. Run Script"
     "2. Create Script"
     "3. Update Script"
-    "4. Rename Script"
-    "5. Delete Script"
-    "6. Show Help"
-    "7. Show Config Options"
-    "8. Edit Config"
+    "4. Delete Script"
+    "5. Show Help"
+    "6. Show Config Options"
+    "7. Edit Config"
   )
 
   # Display options using fzf with newline-separated entries
@@ -504,21 +445,17 @@ function fzf_menu() {
     script_name=$(fzf_list_scripts)
     [ -z "$script_name" ] && echo "No script selected" || update_script "$script_name"
     ;;
-  "${options[3]}") # Rename Script
-    script_name=$(fzf_list_scripts)
-    [ -z "$script_name" ] && echo "No script selected" || rename_script "$script_name"
-    ;;
-  "${options[4]}") # Delete Script
+  "${options[3]}") # Delete Script
     script_name=$(fzf_list_scripts)
     [ -z "$script_name" ] && echo "No script selected" || delete_script "$script_name"
     ;;
-  "${options[5]}") # Delete Script
+  "${options[4]}") # Delete Script
     show_help
     ;;
-  "${options[6]}") # Delete Script
+  "${options[5]}") # Delete Script
     show_config_options
     ;;
-  "${options[7]}") # Delete Script
+  "${options[6]}") # Delete Script
     edit_config
     ;;
   *)
@@ -530,8 +467,8 @@ function fzf_menu() {
 #  handler - handler function to handle user actions and execute the corresponding operations.
 #
 # Arguments:
-#   $1: Action to be performed (e.g., "run", "new", "help", "rename", "update", "delete").
-#   $2: Optional script name for specific actions like "run", "rename", "update", or "delete".
+#   $1: Action to be performed (e.g., "run", "new", "help", "update", "delete").
+#   $2: Optional script name for specific actions like "run", "update", or "delete".
 #
 # Description:
 #   This function processes the provided action and executes the corresponding operation based on the arguments passed.
@@ -542,7 +479,6 @@ function fzf_menu() {
 #     - 'create': Creates a new script interactively.
 #     - 'help': Displays help information.
 #     - 'run': Runs a specified script or prompts the user to select one.
-#     - 'rename': Renames a specified script or prompts the user to select one.
 #     - 'update': Updates a specified script or prompts the user to select one.
 #     - 'delete': Deletes a specified script or prompts the user to select one.
 #     - 'config': Displays available configuration options or opens the config file in the editor.
@@ -555,7 +491,7 @@ function fzf_menu() {
 #   handler "delete" "backup"    # Deletes the 'backup' script.
 #
 # Notes:
-#   - If no script name is provided with actions like 'run', 'rename', 'update', or 'delete', the function will prompt the user to select a script using the `fzf` fuzzy finder.
+#   - If no script name is provided with actions like 'run', 'update', or 'delete', the function will prompt the user to select a script using the `fzf` fuzzy finder.
 #   - If an invalid action is passed, the function will display an error message and recommend using the `yasm help` command for guidance.
 function handler() {
   local action="$1"
@@ -576,14 +512,6 @@ function handler() {
       [[ -z "$selected_script" ]] && echo "No script selected" || run_script "$selected_script"
     else
       run_script "$value"
-    fi
-
-  elif [[ "$action" == "rename" ]]; then
-    if [[ -z "$value" ]]; then
-      script_name=$(fzf_list_scripts)
-      [[ -z "$script_name" ]] && echo "No script selected" || rename_script "$script_name"
-    else
-      rename_script "$value"
     fi
 
   elif [[ "$action" == "update" ]]; then

@@ -333,17 +333,17 @@ function run_script() {
   "$script_path" $args
 }
 
-# show_help - Display usage instructions for the DotScripts CLI tool.
+# show_help - Display usage instructions for the YASM CLI tool.
 #
 # Description:
-#   Prints an overview of available DotScripts commands and their usage.
+#   Prints an overview of available YASM commands and their usage.
 #   Helpful for users to understand how to interact with the tool.
 #
 # Output:
 #   - A list of available commands with a brief description.
 #   - An example of how to use a command.
 function show_help() {
-  echo "🛠️ DotScripts - Usage"
+  echo "🛠️ YASM - Usage"
   echo
   echo "  yasm                   Launch fuzzy menu"
   echo "  yasm new               Create a new script interactively"
@@ -366,7 +366,7 @@ function show_help() {
 # show_config_options - Display help information about configuration options.
 #
 # Description:
-#   Prints an explanation of the supported configuration keys for DotScripts.
+#   Prints an explanation of the supported configuration keys for YASM.
 #   Useful for users who want to understand how to customize the behavior of the tool via the config file.
 #
 # Configuration Keys:
@@ -374,7 +374,7 @@ function show_help() {
 #   - yasm_meta_dir    : Directory where the corresponding metadata `.toml` files are stored.
 #   - yasm_editor      : Editor used to open and edit script and metadata files.
 function show_config_options() {
-  echo " DotScripts - Config"
+  echo " YASM - Config"
   echo
   echo "  yasm_scripts_dir      Directory in which shell files of scripts are stored"
   echo "  yasm_meta_dir         Directory in which metadata files of scripts are stored"

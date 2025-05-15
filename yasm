@@ -5,9 +5,8 @@ CONFIG_FILE="${XDG_CONFIG_HOME:-$HOME/.config}/yasm/config"
 [[ -f "$CONFIG_FILE" ]] && source "$CONFIG_FILE"
 
 # User configurable variables
-DOT_SCRIPTS_DIR="${yasm_scripts_dir:-$HOME/.dotscripts/scripts}" # Folder where scripts will be stored
-DOT_META_DIR="${yasm_meta_dir:-$HOME/.dotscripts/meta}"          # Folder where metadata will be stored
-YASM_EDITOR="${yasm_editor:-${EDITOR:-nano}}"                    # Defaul Editor used by yasm
+DOT_SCRIPTS_DIR="${yasm_scripts_dir:-$HOME/.dotscripts}" # Folder where scripts will be stored
+YASM_EDITOR="${yasm_editor:-${EDITOR:-nano}}"            # Defaul Editor used by yasm
 
 # Global options for fzf
 FZF_OPTS=(
@@ -18,39 +17,45 @@ FZF_OPTS=(
   --ansi
 )
 
-# generate_meta_template - Outputs a boilerplate TOML metadata block for a script.
-#
-# Arguments:
-#   $1 - Script name (used in the usage field).
-#
-# Output:
-#   Prints a TOML-formatted metadata template with placeholder fields:
-#     - description
-#     - tags
-#     - usage (includes the script name)
-#     - dependencies
-function generate_meta_template() {
-  local name="$1"
-  cat <<EOF
-description = "Add a description here"
-tags = ["add", "tags", "here"]
-usage = "$name.sh <arguments>"
-dependencies = ["add", "dependencies", "here"]
-EOF
+# Functions to fetch yasm metadata from script file
+get_yasm_title() {
+  sed -n 's/^# @yasm.title \(.*\)/\1/p' "$1"
+}
+get_yasm_description() {
+  sed -n 's/^# @yasm.description \(.*\)/\1/p' "$1"
+}
+get_yasm_has_arguments() {
+  sed -n 's/^# @yasm.has_arguments \(.*\)/\1/p' "$1"
+}
+get_yasm_usage() {
+  sed -n 's/^# @yasm.usage \(.*\)/\1/p' "$1" | cut -d'"' -f2
+}
+get_yasm_dependencies() {
+  sed -n 's/^# @yasm.dependencies \(.*\)/\1/p' "$1" | cut -d'[' -f2 | cut -d']' -f1 | tr ',' '\n' | tr -d '" '
 }
 
-# generate_script_template - Outputs a basic Bash script template with a greeting.
+# generate_script_template - Outputs the starter bash script template.
 #
 # Arguments:
 #   $1 - Script name
 #
 # Output:
-#   Prints a simple Bash script with:
-#     - A hello message using the script name
+#   Prints a starter Bash script with:
+#     - Config options for yasm
+#     - A starter helloworld message
 function generate_script_template() {
   local name="$1"
   cat <<EOF
 #!/usr/bin/env bash
+
+# YASM CONFIG START >>>
+# @yasm.title $name
+# @yasm.description Add a description here
+# @yasm.has_arguments true/false
+# @yasm.usage $name.sh <arguments>
+# @yasm.tags ["add", "tags"]
+# @yasm.dependencies ["add", "dependencies"]
+# <<< YASM CONFIG END
 
 # $name script
 echo "Hello from $name!"
@@ -85,21 +90,21 @@ function check_installed() {
   return 0 # Return 0 if no dependencies are missing
 }
 
-# create_script - Interactive utility to create a new script and metadata file.
+# create_script - Utility function to create a new script file.
 #
 # Arguments:
 #   $1 - (Optional) Name of the script. If not provided, user will be prompted.
 #
 # Behavior:
 #   - Validates the script name (alphanumeric, underscores, hyphens).
-#   - Prevents overwriting existing script or metadata files.
-#   - Generates a script in $DOT_SCRIPTS_DIR and metadata in $DOT_META_DIR.
+#   - Prevents overwriting existing script files.
+#   - Generates a script file in $DOT_SCRIPTS_DIR.
 #   - Makes the script executable.
-#   - Optionally opens the files in the user's editor.
+#   - Optionally opens the file in the editor.
 #
 # Dependencies:
-#   - Relies on generate_script_template and generate_meta_template functions.
-#   - Uses $YASM_EDITOR for editing, or falls back to nano if undefined.
+#   - Relies on generate_script_template function.
+#   - Uses $YASM_EDITOR for opening the file.
 function create_script() {
   # Try to get name from the first argument
   name="$1"
@@ -117,23 +122,18 @@ function create_script() {
   [[ ! "$name" =~ ^[a-zA-Z0-9_-]+$ ]] && echo " Invalid name. Only alphanumeric, hyphens (-), and underscores (_) are allowed." && return
 
   local script_path="$DOT_SCRIPTS_DIR/$name.sh"
-  local meta_path="$DOT_META_DIR/$name.toml"
 
-  # Exit if script or metadata already exists
+  # Exit if script already exists
   [[ -f "$script_path" ]] && echo " Script for '$name' already exists." && return
-  [[ -f "$meta_path" ]] && echo " Metadata for '$name' already exists." && return
 
-  # Create the script and metadata files
+  # Create the script file
   generate_script_template "$name" >"$script_path"
-  generate_meta_template "$name" >"$meta_path"
 
   # Make the script executable
   chmod +x "$script_path"
 
   # Confirmation message
-  echo " Script '$name' created!"
-  echo "  - Script: $script_path"
-  echo "  - Metadata: $meta_path"
+  echo " Script '$name' created! ($script_path)"
 
   # Prompt user to open files in editor
   read -rp " Open files in editor($YASM_EDITOR)? [Y/n]: " open_choice
@@ -143,63 +143,59 @@ function create_script() {
 
   # If user said yes open it in $YASM_EDITOR
   if [[ -z "$open_choice" || "$open_choice" == "y" || "$open_choice" == "yes" ]]; then
-    $YASM_EDITOR "$script_path" "$meta_path"
+    $YASM_EDITOR "$script_path"
   fi
 }
 
-# update_script - Opens a script and its metadata for editing.
+# update_script - Opens a script in $YASM_EDITOR for editing.
 #
 # Arguments:
 #   $1 - Script name (without .sh extension).
 #
 # Behavior:
-#   - Verifies the existence of both the script and its metadata.
-#   - Opens both files in the user's preferred editor.
+#   - Verifies the existence of the script file.
+#   - Opens script file in the user's preferred editor.
 #
 # Output:
 #   - Error messages if files are missing.
 #
 # Dependencies:
-#   - Requires $DOT_SCRIPTS_DIR and $DOT_META_DIR to be set.
-#   - Uses $YASM_EDITOR
+#   - Requires $DOT_SCRIPTS_DIR to be set.
+#   - Uses $YASM_EDITOR to open the file for editing
 function update_script() {
   local name="$1"
   local script_path="$DOT_SCRIPTS_DIR/$name.sh"
-  local meta_path="$DOT_META_DIR/$name.toml"
 
-  # Exit if the script or metadata file doesn't exist
+  # Exit if the script file doesn't exist
   [[ ! -f "$script_path" ]] && echo " Script for '$name' not found." && return
-  [[ ! -f "$meta_path" ]] && echo " Metadata for '$name' not found." && return
 
-  # Open the script and metadata files in the editor
-  $YASM_EDITOR "$script_path" "$meta_path"
+  # Open the script file in the editor
+  $YASM_EDITOR "$script_path"
 }
 
-# delete_script - Deletes a script and its associated metadata after confirmation.
+# delete_script - Deletes a script after confirmation.
 #
 # Arguments:
 #   $1 - Script name (without .sh extension).
 #
 # Behavior:
-#   - Checks if both the script and its metadata exist.
+#   - Checks if the script file exist.
 #   - Prompts the user for confirmation before deletion.
-#   - Deletes both files if confirmed.
+#   - Deletes file if confirmed.
 #
 # Output:
 #   - Confirmation prompt and success or cancellation message.
-#   - Error messages if files are missing.
+#   - Error messages if file is missing.
 #
 # Dependencies:
-#   - Requires $DOT_SCRIPTS_DIR and $DOT_META_DIR to be set.
+#   - Requires $DOT_SCRIPTS_DIR to be set.
 #   - Uses 'rm' for file deletion.
 function delete_script() {
   local name="$1"
   local script_path="$DOT_SCRIPTS_DIR/$name.sh"
-  local meta_path="$DOT_META_DIR/$name.toml"
 
-  # Exit if the script or metadata for file doesn't exist
+  # Exit if the script file doesn't exist
   [[ ! -f "$script_path" ]] && echo " Script for '$name' not found." && return
-  [[ ! -f "$meta_path" ]] && echo " Metadata for '$name' not found." && return
 
   # Confirm deletion
   echo -n " Are you sure you want to delete '$name'? (y/N): "
@@ -207,71 +203,67 @@ function delete_script() {
 
   # If user said yes delete it
   if [[ "$confirm" == "y" ]]; then
-    rm -f "$script_path" "$meta_path"                           # Delete the script and metadata
-    echo " Script '$name' and its metadata have been deleted." # Show confirmation message
+    rm -f "$script_path"
+    echo " Script '$name' has been deleted." # Show confirmation message
   else
     echo " Deletion cancelled."
   fi
 }
 
-# run_script - Executes a user script after checking its metadata and dependencies.
+# run_script - Executes a user script after checking dependencies are met.
 #
 # Arguments:
 #   $1 - Script name (without .sh extension).
 #
 # Behavior:
 #   - Verifies that the script exists and is executable.
-#   - Loads associated metadata and extracts dependencies and usage info.
+#   - Extract assigned dependencies from the scrict metadata.
 #   - Checks for missing dependencies using check_installed.
-#   - Prompts the user for arguments and executes the script.
+#   - Prompts the user for arguments(if needed | if not given) and executes the script.
 #
 # Output:
 #   - Usage information.
-#   - Warnings for missing scripts, metadata, or dependencies.
+#   - Warnings for missing scripts, or dependencies.
 #   - Runs the script with user-provided arguments.
 #
 # Dependencies:
-#   - Requires $DOT_SCRIPTS_DIR and $DOT_META_DIR to be set.
-#   - Expects a valid TOML-formatted metadata file.
+#   - Requires $DOT_SCRIPTS_DIR to be set.
+#   - Expects a valid config in the script file.
 #   - Uses check_installed function to validate dependencies.
 function run_script() {
   local name="$1"
   local script_path="$DOT_SCRIPTS_DIR/$name.sh"
-  local meta_path="$DOT_META_DIR/$name.toml"
 
   # Exit if the script is not executable or doesn't exist
   [[ ! -x "$script_path" ]] && echo " Script for '$name' not found or not executable at: $script_path" && return
 
-  # Exit if the metadata file doesn't exist
-  [[ ! -f "$meta_path" ]] && echo " Metadata for '$name' not found at: $meta_path" && return
+  # Extract dependencies from the script file
+  local deps=$(get_yasm_dependencies "$script_path")
 
-  # Check for dependencies in the metadata file
-  if [[ -f "$meta_path" ]]; then
-    # Extract dependencies from the metadata file
-    local deps
-    deps=$(grep '^dependencies' "$meta_path" | cut -d'[' -f2 | cut -d']' -f1 | tr ',' '\n' | tr -d '" ')
+  # If any dependencies are found, check if they are installed
+  if [[ -n "$deps" ]]; then
+    # Capture the missing dependencies
+    missing_deps=$(check_installed $deps)
 
-    if [[ -n "$deps" ]]; then
-      # Capture the missing dependencies
-      missing_deps=$(check_installed $deps)
-
-      # If there are missing dependencies, return and don't run the script
-      if [[ -n "$missing_deps" ]]; then
-        echo " Missing dependencies: $missing_deps"
-        return 1
-      fi
+    # If there are missing dependencies, return and don't run the script
+    if [[ -n "$missing_deps" ]]; then
+      echo " Missing dependencies: $missing_deps"
+      return 1
     fi
   fi
 
-  # Display usage information from metadata
-  local usage
-  usage=$(grep '^usage' "$meta_path" | cut -d'"' -f2)
-  echo -e " Usage: $usage"
+  # Ask for arguments if needed
+  local has_args=$(get_yasm_has_arguments "$script_path")
+  if [[ "$has_args" == "true" ]]; then
+    # Display usage information from metadata
+    local usage=$(get_yasm_usage "$script_path")
+    echo -e " Usage: $usage"
 
-  # Prompt for arguments
-  read -rp "󰛿 Enter arguments for '$name': " args
-  echo " Running: $name $args"
-  echo
+    # Prompt for arguments
+    read -rp "󰛿 Enter arguments for '$name': " args
+    echo " Running: $name $args"
+    echo
+  fi
 
   # Execute the script with the provided arguments
   "$script_path" $args
@@ -349,49 +341,47 @@ function edit_config() {
 #
 # Description:
 #   This function uses fzf to provide an interactive list of scripts stored in the metadata directory ($DOT_META_DIR).
-#   It shows each script's name and description, allowing the user to select a script.
-#   Returns the selected script's name.
+#   It shows each script's title and description, allowing the user to select a script.
+#   Returns the selected script's file basename.
 #
 # Behavior:
-#   - Lists scripts by reading .toml metadata files from $DOT_META_DIR.
-#   - Displays each script's name and description in a fuzzy search prompt.
-#   - Returns the script name of the selected script.
+#   - Lists scripts by reading files from $DOT_META_DIR.
+#   - Displays each script's title and description in a fuzzy search prompt.
+#   - Returns the basename of the selected script.
 #
 # Output:
-#   - Returns the name of the selected script (or prints an error message if no scripts are found).
-#   - If no scripts are found in the metadata directory, it returns 1 and outputs an error message.
+#   - Returns the basename of the selected script (or prints an error message if no scripts are found).
+#   - If no scripts are found in the directory, it returns 1 and outputs an error message.
 #
 # Dependencies:
 #   - Requires fzf for interactive search.
 #   - Requires DOT_META_DIR to be set and contain .toml metadata files.
 function fzf_list_scripts() {
-  local choice
-  local script_name
+  local choice file
+  local entries=()
 
-  # Ensure that the DOT_META_DIR is not empty
   shopt -s nullglob
-  local toml_files=("$DOT_META_DIR"/*.toml)
+  local script_files=("$DOT_SCRIPTS_DIR"/*)
   shopt -u nullglob
 
-  if [[ ${#toml_files[@]} -eq 0 ]]; then
+  for file in "${script_files[@]}"; do
+    [[ -f "$file" ]] || continue
+    local title desc
+    title=$(get_yasm_title "$file")
+    [[ -n "$title" ]] || continue
+    desc=$(get_yasm_description "$file")
+    entries+=("$(printf "%s\t%s - %s" "$file" "$title" "$desc")")
+  done
+
+  if [[ ${#entries[@]} -eq 0 ]]; then
     echo "No scripts found." >&2
     return 1
   fi
 
-  # Generate list of scripts with descriptions
-  choice=$(
-    for file in "$DOT_META_DIR"/*.toml; do
-      name=$(basename "$file" .toml)
-      desc=$(grep -m1 description "$file" | cut -d'"' -f2)
-      printf "%-20s - %s\n" "$name" "$desc"
-    done | fzf --prompt=" Select script: " "${FZF_OPTS[@]}"
-  )
+  choice=$(printf "%s\n" "${entries[@]}" | cut -f2- | fzf --prompt=" Select script: " "${FZF_OPTS[@]}")
+  file=$(printf "%s\n" "${entries[@]}" | grep -F -- "$choice" | cut -f1)
 
-  # Extract the script name from the selection
-  script_name=$(echo "$choice" | awk '{print $1}') # We are only using the fist part before space as filename is expected to be one word
-
-  # Returning the script name
-  echo $script_name
+  echo "$(basename "$file" .sh)"
 }
 
 # fzf_menu - Display a fuzzy menu to select an action for managing scripts.
@@ -548,7 +538,7 @@ function handler() {
 
 function main() {
   # Ensure required directories exist
-  mkdir -p "$DOT_META_DIR" "$DOT_SCRIPTS_DIR"
+  mkdir -p "$DOT_SCRIPTS_DIR"
 
   # Call the main handler function
   handler "$@"

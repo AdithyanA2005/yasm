@@ -34,6 +34,20 @@ get_yasm_dependencies() {
   sed -n 's/^# @yasm.dependencies \(.*\)/\1/p' "$1" | cut -d'[' -f2 | cut -d']' -f1 | tr ',' '\n' | tr -d '" '
 }
 
+# get_file_basename - Extracts the base name of a file without its extension.
+#
+# Arguments:
+#   $1 - Full path to the file.
+#
+# Output:
+#  - Returns the base name of the file without its extension.
+function get_file_basename() {
+  local file="$1"
+  local basename="${file##*/}" # Extract the filename from the full path
+  local name="${basename%.*}"  # Remove the file extension
+  echo "$name"                 # Return the name without the extension
+}
+
 # generate_script_template - Outputs the starter bash script template.
 #
 # Arguments:
@@ -381,7 +395,7 @@ function fzf_list_scripts() {
   choice=$(printf "%s\n" "${entries[@]}" | cut -f2- | fzf --prompt=" Select script: " "${FZF_OPTS[@]}")
   file=$(printf "%s\n" "${entries[@]}" | grep -F -- "$choice" | cut -f1)
 
-  echo "$(basename "$file" .sh)"
+  echo $(get_file_basename "$file")
 }
 
 # fzf_menu - Display a fuzzy menu to select an action for managing scripts.

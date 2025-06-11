@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"yasm/common"
 	"yasm/config"
+	"yasm/fzf"
 	"yasm/utils"
 )
 
@@ -21,7 +21,7 @@ func removeScript(scriptName string) error {
 		var err error
 
 		// Fuzzy select a script if no name provided
-		scriptName, err = common.FuzzySelectScript()
+		scriptName, err = fzf.FuzzySelectScript()
 		if err != nil {
 			return err
 		}

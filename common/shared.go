@@ -2,75 +2,14 @@ package common
 
 import (
 	"bufio"
-	"fmt"
 	"maps"
 	"os"
-	"path/filepath"
 	"sort"
 	"strings"
 	"yasm/config"
-	"yasm/fzf"
-	"yasm/metadata"
 
 	"github.com/olekukonko/tablewriter"
 )
-
-// FuzzySelectScript presents a list of scripts to the user from which
-// user can select one using the fzf fuzzy finder.
-func FuzzySelectScript() (string, error) {
-	scriptsDir := config.GetScriptsDir()
-	entries, err := os.ReadDir(scriptsDir)
-	if err != nil {
-		return "", fmt.Errorf("failed to list scripts: %w", err)
-	}
-
-	if len(entries) == 0 {
-		fmt.Println("No scripts found in", scriptsDir)
-		return "", nil
-	}
-
-	// Collect mapping of displayName => actual filename
-	displayMap := make(map[string]string)
-	var displayList []string
-
-	for _, entry := range entries {
-		if entry.Type().IsRegular() {
-			filename := entry.Name()
-			fullPath := filepath.Join(scriptsDir, filename)
-
-			// commentChar, err := DetectCommentChar(fullPath)
-			// if err != nil {
-			// 	log.Printf("Failed to detect comment character: %v", err)
-			// 	commentChar = "#" // fallback
-			// }
-
-			commentChar := "#" // fallback
-
-			meta, err := metadata.ExtractMetadata(fullPath, commentChar)
-			title := meta.Title
-			if err != nil || title == "" {
-				title = ""
-			}
-
-			displayName := filename
-			if title != "" {
-				displayName += " - " + title
-			}
-
-			displayList = append(displayList, displayName)
-			displayMap[displayName] = filename
-		}
-	}
-
-	// Run fzf
-	selected, err := fzf.FuzzySelect(displayList)
-	if err != nil {
-		return "", fmt.Errorf("fzf exited: %w", err)
-	}
-
-	// Return actual filename
-	return displayMap[selected], nil
-}
 
 // Preset languages with default shebangs and comments
 var presetLanguages = map[string]config.LanguageDef{

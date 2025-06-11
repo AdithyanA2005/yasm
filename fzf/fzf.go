@@ -1,9 +1,15 @@
 package fzf
 
 import (
+	"fmt"
+	"log"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
+	"yasm/common"
+	"yasm/config"
+	"yasm/metadata"
 )
 
 // FuzzySelect presents a list of entries to the user using the fzf fuzzy finder.
@@ -31,4 +37,62 @@ func FuzzySelect(scripts []string) (string, error) {
 	// Trim the output to get the selected script
 	selection := strings.TrimSpace(string(output))
 	return selection, nil
+}
+
+// FuzzySelectScript presents a list of scripts to the user from which
+// user can select one using the fzf fuzzy finder.
+func FuzzySelectScript() (string, error) {
+	scriptsDir := config.GetScriptsDir()
+	entries, err := os.ReadDir(scriptsDir)
+	if err != nil {
+		return "", fmt.Errorf("failed to list scripts: %w", err)
+	}
+
+	if len(entries) == 0 {
+		fmt.Println("No scripts found in", scriptsDir)
+		return "", nil
+	}
+
+	// Collect mapping of displayName => actual filename
+	displayMap := make(map[string]string)
+	var displayList []string
+
+	for _, entry := range entries {
+		if entry.Type().IsRegular() {
+			filename := entry.Name()
+			fullPath := filepath.Join(scriptsDir, filename)
+
+			commentChar, err := common.DetectCommentChar(fullPath)
+			if err != nil {
+				log.Printf("Failed to detect comment character: %v", err)
+				commentChar = "#" // fallback
+			}
+
+			// commentChar := "#" // fallback
+
+			meta, err := metadata.ExtractMetadata(fullPath, commentChar)
+			title := meta.Title
+			if err != nil || title == "" {
+				title = ""
+			}
+			fmt.Print(meta.Dependencies)
+
+			displayName := filename
+			if title != "" {
+				displayName += " - " + title
+			}
+
+			displayList = append(displayList, displayName)
+			displayMap[displayName] = filename
+		}
+	}
+
+	// Run fzf
+	selected, err := FuzzySelect(displayList)
+	if err != nil {
+		return "", fmt.Errorf("fzf exited: %w", err)
+	}
+
+	// Return actual filename
+	return displayMap[selected], nil
 }

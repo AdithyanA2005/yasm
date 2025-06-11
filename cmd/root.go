@@ -9,6 +9,7 @@ import (
 	"yasm/cmd/remove"
 	"yasm/common"
 	"yasm/config"
+	"yasm/fzf"
 
 	"github.com/urfave/cli/v2"
 )
@@ -53,7 +54,7 @@ func Execute(args []string) error {
 			}
 
 			// Fuzzy select a script if no name provided
-			selected, err := common.FuzzySelectScript()
+			selected, err := fzf.FuzzySelectScript()
 			if err != nil {
 				return err
 			}

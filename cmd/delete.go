@@ -6,6 +6,9 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
+// deleteCommand returns a new CLI command for deleting scripts.
+// This command allows the user to delete an existing script by name,
+// or open a menu to select and delete a script if no name is provided.
 func deleteCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "delete",

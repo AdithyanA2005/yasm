@@ -44,12 +44,7 @@ func CreateScript(name string, lang string) error {
 	}
 	defer file.Close()
 
-	template := fmt.Sprintf(
-		"%s\n%s %s\n%s %s\n",
-		langDef.Shebang,
-		langDef.Comment, "Script created by yasm",
-		langDef.Comment, "Add your code below",
-	)
+	template := generateScript(langDef.Shebang, langDef.Comment, name)
 
 	_, err = file.WriteString(template)
 	if err != nil {
@@ -64,4 +59,22 @@ func CreateScript(name string, lang string) error {
 	cmd.Stderr = os.Stderr
 
 	return cmd.Run()
+}
+
+func generateScript(shebang, comment, name string) string {
+	return fmt.Sprintf(`%[1]s
+
+%[2]s YASM CONFIG START >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+%[2]s @yasm.title %[3]s
+%[2]s @yasm.description 
+%[2]s @yasm.tags []
+%[2]s @yasm.dependencies []
+%[2]s <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< YASM CONFIG END
+
+%[2]s ################################################
+%[2]s ### MAIN SCRIPT STARTS #########################
+%[2]s ################################################
+
+%[2]s Write your script here.
+`, shebang, comment, name)
 }

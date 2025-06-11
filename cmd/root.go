@@ -25,6 +25,11 @@ func Execute(args []string) error {
 				Name:  "shell",
 				Usage: "Output shell function for injection (bash, zsh, fish)",
 			},
+			&cli.BoolFlag{
+				Name:    "list-languages",
+				Aliases: []string{"l"},
+				Usage:   "Show supported script languages",
+			},
 		},
 		Commands: []*cli.Command{
 			createCommand(),
@@ -34,6 +39,13 @@ func Execute(args []string) error {
 		Action: func(c *cli.Context) error {
 			if shell := c.String("shell"); shell != "" {
 				scripts.PrintShellWrapper(strings.ToLower(shell))
+				os.Exit(0)
+			}
+
+			if c.Bool("list-languages") {
+				fmt.Println("Supported languages:")
+				scripts.PrintLanguagesTable()
+				return nil
 			}
 
 			scriptsDir := config.GetScriptsDir()

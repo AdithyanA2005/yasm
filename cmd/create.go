@@ -17,21 +17,9 @@ func createCommand() *cli.Command {
 				Usage: "Language for the script (bash, python, etc).",
 				Value: "bash",
 			},
-			&cli.BoolFlag{
-				Name:  "list-languages",
-				Usage: "Show supported languages",
-			},
 		},
 
 		Action: func(c *cli.Context) error {
-			if c.Bool("list-languages") {
-				fmt.Println("Supported languages:")
-				for lang, shebang := range scripts.GetLanguages() {
-					fmt.Printf("  %-8s -> %s\n", lang, shebang)
-				}
-				return nil
-			}
-
 			scriptName := c.Args().First()
 			if scriptName == "" {
 				fmt.Println("Please provide a script name.")

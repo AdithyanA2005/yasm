@@ -20,7 +20,13 @@ func Execute(args []string) error {
 			config.LoadConfig()
 			return nil
 		},
-		Flags: globalFlags(),
+		Flags: []cli.Flag{
+			&cli.StringFlag{
+				Name:    "shell",
+				Usage:   "Output shell function for injection (bash, zsh, fish)",
+				Aliases: []string{"s"},
+			},
+		},
 		Commands: []*cli.Command{
 			createCommand(),
 			editCommand(),

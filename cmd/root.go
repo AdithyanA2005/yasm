@@ -73,7 +73,7 @@ func Execute(args []string) error {
 			}
 
 			// Run fzf to select a script
-			selected, err := fzf.FuzzySelectScript(scriptNames)
+			selected, err := fzf.FuzzySelect(scriptNames)
 			if err != nil {
 				return fmt.Errorf("fzf selection failed: %w", err)
 			}

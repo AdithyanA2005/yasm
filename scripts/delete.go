@@ -17,22 +17,10 @@ func DeleteScript(scriptName string) error {
 
 	// If scriptname is not given use fuzzy finder to select a script
 	if scriptName == "" {
-		// Read entries in the scripts directory
-		entries, err := os.ReadDir(scriptsDir)
-		if err != nil {
-			return fmt.Errorf("failed to list scripts: %w", err)
-		}
-
-		// Collect the names of all regular files from the entries slice.
-		var scriptNames []string
-		for _, entry := range entries {
-			if entry.Type().IsRegular() {
-				scriptNames = append(scriptNames, entry.Name())
-			}
-		}
+		var err error
 
 		// Fuzzy select a script if no name provided
-		scriptName, err = fzf.FuzzySelectScript(scriptNames)
+		scriptName, err = fzf.FuzzySelectScript()
 		if err != nil {
 			return err
 		}

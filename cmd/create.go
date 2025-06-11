@@ -18,6 +18,15 @@ func createCommand() *cli.Command {
 				Value: "bash",
 			},
 		},
+		UsageText: "" +
+			"yasm create <script-name>    									Open new script in editor.\n" +
+			"yasm create <script-name> --lang <language>    Open new script with specified language in editor.\n" +
+			"\n" +
+			"To view available languages, run:\n" +
+			"    yasm --list-languages\n" +
+			"\n" +
+			"To know more about languages, run:\n" +
+			"    yasm config languages",
 
 		Action: func(c *cli.Context) error {
 			scriptName := c.Args().First()

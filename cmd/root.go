@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"yasm/cmd/create"
 	"yasm/common"
 	"yasm/config"
 	"yasm/scripts"
@@ -32,7 +33,7 @@ func Execute(args []string) error {
 			},
 		},
 		Commands: []*cli.Command{
-			createCommand(),
+			create.Command(),
 			editCommand(),
 			deleteCommand(),
 		},

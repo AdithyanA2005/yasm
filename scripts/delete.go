@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 	"yasm/config"
 	"yasm/fzf"
+	"yasm/utils"
 )
 
 // DeleteScript deletes the specified script from the scripts directory.
@@ -32,12 +33,11 @@ func DeleteScript(scriptName string) error {
 	}
 
 	// Take user confirmation before deleting the script
-	// TODO: Make Confirm function capable for handling this (default values)
 	scriptPath := filepath.Join(scriptsDir, scriptName)
-	fmt.Printf("Are you sure you want to delete '%s'? (y/N): ", scriptName)
-	var response string
-	fmt.Scanln(&response)
-	if response != "y" && response != "Y" {
+	isConfirmed := utils.Confirm("Are you sure you want to delete `"+scriptName+"`?", "n")
+
+	// Abort if not confirmed
+	if !isConfirmed {
 		fmt.Println("Aborted.")
 		return nil
 	}

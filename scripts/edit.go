@@ -5,8 +5,8 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"yasm/common"
 	"yasm/config"
-	"yasm/fzf"
 )
 
 // EditScript opens the specified script in the user's configured editor.
@@ -20,7 +20,7 @@ func EditScript(scriptName string) error {
 		var err error
 
 		// Fuzzy select a script if no name provided
-		scriptName, err = fzf.FuzzySelectScript()
+		scriptName, err = common.FuzzySelectScript()
 		if err != nil {
 			return err
 		}

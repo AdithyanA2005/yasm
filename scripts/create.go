@@ -9,6 +9,7 @@ import (
 	"slices"
 	"strings"
 	"unicode/utf8"
+	"yasm/common"
 	"yasm/config"
 )
 
@@ -31,7 +32,7 @@ func CreateScript(name string, lang string) error {
 	}
 
 	// Get language definitions
-	languages := GetLanguages()
+	languages := common.GetLanguages()
 	langDef, ok := languages[lang]
 	if !ok {
 		return fmt.Errorf("unsupported language: %s", lang)

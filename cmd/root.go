@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"yasm/common"
 	"yasm/config"
-	"yasm/fzf"
 	"yasm/scripts"
 
 	"github.com/urfave/cli/v2"
@@ -46,12 +46,12 @@ func Execute(args []string) error {
 			// Handle list-languages flag
 			if c.Bool("list-languages") {
 				fmt.Println("Supported languages:")
-				scripts.PrintLanguagesTable()
+				common.PrintLanguagesTable()
 				return nil
 			}
 
 			// Fuzzy select a script if no name provided
-			selected, err := fzf.FuzzySelectScript()
+			selected, err := common.FuzzySelectScript()
 			if err != nil {
 				return err
 			}

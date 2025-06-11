@@ -1,11 +1,9 @@
 package fzf
 
 import (
-	"fmt"
 	"os"
 	"os/exec"
 	"strings"
-	"yasm/config"
 )
 
 // FuzzySelect presents a list of entries to the user using the fzf fuzzy finder.
@@ -33,37 +31,4 @@ func FuzzySelect(scripts []string) (string, error) {
 	// Trim the output to get the selected script
 	selection := strings.TrimSpace(string(output))
 	return selection, nil
-}
-
-// FuzzySelectScript presents a list of scripts to the user from which he can select one using the fzf fuzzy finder.
-func FuzzySelectScript() (string, error) {
-	// Read scripts directory and store entries sorted by name
-	scriptsDir := config.GetScriptsDir()
-	entries, err := os.ReadDir(scriptsDir)
-	if err != nil {
-		return "", fmt.Errorf("failed to list scripts: %w", err)
-	}
-
-	// Collect the names of all regular files from the entries slice.
-	// Only files (not directories or other types) are included in the scriptNames slice.
-	var scriptNames []string
-	for _, entry := range entries {
-		if entry.Type().IsRegular() {
-			scriptNames = append(scriptNames, entry.Name())
-		}
-	}
-
-	// If no scripts found, print message and exit
-	if len(scriptNames) == 0 {
-		fmt.Println("No scripts found in", scriptsDir)
-		return "", nil
-	}
-
-	// Run fzf to select a script
-	scriptName, err := FuzzySelect(scriptNames)
-	if err != nil {
-		return "", fmt.Errorf("fzf exited: %w", err)
-	}
-
-	return scriptName, nil
 }

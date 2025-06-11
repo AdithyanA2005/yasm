@@ -16,6 +16,9 @@ func Execute(args []string) error {
 			return nil
 		},
 		Flags: globalFlags(),
+		Commands: []*cli.Command{
+			deleteCommand(),
+		},
 	}
 
 	return app.Run(args)

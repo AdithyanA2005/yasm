@@ -50,32 +50,10 @@ func Execute(args []string) error {
 				return nil
 			}
 
-			// Read scripts directory and store entries sorted by name
-			scriptsDir := config.GetScriptsDir()
-			entries, err := os.ReadDir(scriptsDir)
+			// Fuzzy select a script if no name provided
+			selected, err := fzf.FuzzySelectScript()
 			if err != nil {
-				return fmt.Errorf("failed to read scripts directory: %w", err)
-			}
-
-			// Collect the names of all regular files from the entries slice.
-			// Only files (not directories or other types) are included in the scriptNames slice.
-			var scriptNames []string
-			for _, entry := range entries {
-				if entry.Type().IsRegular() {
-					scriptNames = append(scriptNames, entry.Name())
-				}
-			}
-
-			// If no scripts found, print message and exit
-			if len(scriptNames) == 0 {
-				fmt.Println("No scripts found in", scriptsDir)
-				return nil
-			}
-
-			// Run fzf to select a script
-			selected, err := fzf.FuzzySelect(scriptNames)
-			if err != nil {
-				return fmt.Errorf("fzf selection failed: %w", err)
+				return err
 			}
 
 			// If a script was selected, print the command to run it

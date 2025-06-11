@@ -1,15 +1,13 @@
-package cmd
+package edit
 
 import (
-	"yasm/scripts"
-
 	"github.com/urfave/cli/v2"
 )
 
 // editCommand returns a new CLI command for editing scripts.
 // This command allows the user to edit an existing script by name,
 // or open a menu to select and edit a script if no name is provided.
-func editCommand() *cli.Command {
+func Command() *cli.Command {
 	return &cli.Command{
 		Name:  "edit",
 		Usage: "Edit an existing script",
@@ -19,7 +17,7 @@ func editCommand() *cli.Command {
 
 		Action: func(c *cli.Context) error {
 			scriptName := c.Args().First()
-			return scripts.EditScript(scriptName)
+			return editScript(scriptName)
 		},
 	}
 }

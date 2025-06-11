@@ -1,4 +1,4 @@
-package scripts
+package edit
 
 import (
 	"fmt"
@@ -12,7 +12,7 @@ import (
 // EditScript opens the specified script in the user's configured editor.
 // If scriptName is empty, it presents a fuzzy finder menu to select a script from the scripts directory.
 // Returns an error if the script cannot be found, listed, or opened in the editor.
-func EditScript(scriptName string) error {
+func editScript(scriptName string) error {
 	scriptsDir := config.GetScriptsDir()
 
 	// If scriptname is not given use fuzzy finder to select a script

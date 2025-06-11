@@ -5,6 +5,7 @@ import (
 	"os"
 	"strings"
 	"yasm/cmd/create"
+	"yasm/cmd/edit"
 	"yasm/cmd/remove"
 	"yasm/common"
 	"yasm/config"
@@ -35,7 +36,7 @@ func Execute(args []string) error {
 		},
 		Commands: []*cli.Command{
 			create.Command(),
-			editCommand(),
+			edit.Command(),
 			remove.Command(),
 		},
 		Action: func(c *cli.Context) error {

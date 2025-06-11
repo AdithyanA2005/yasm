@@ -7,6 +7,10 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
+// createCommand returns a new CLI command for creating scripts.
+// This command allows the user to specify a script name and an optional language.
+// If no language is specified, "bash" is used by default.
+// The command opens the new script in the editor and supports listing available languages.
 func createCommand() *cli.Command {
 	return &cli.Command{
 		Name:  "create",
@@ -29,12 +33,16 @@ func createCommand() *cli.Command {
 			"    yasm config languages",
 
 		Action: func(c *cli.Context) error {
+			// Extract script name from arguments
 			scriptName := c.Args().First()
 			if scriptName == "" {
 				fmt.Println("Please provide a script name.")
 				return nil
 			}
+
+			// Extract language from lang flag
 			lang := c.String("lang")
+
 			return scripts.CreateScript(scriptName, lang)
 		},
 	}

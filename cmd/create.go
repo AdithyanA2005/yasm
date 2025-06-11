@@ -20,7 +20,7 @@ func createCommand() *cli.Command {
 		},
 		UsageText: "" +
 			"yasm create <script-name>    									Open new script in editor.\n" +
-			"yasm create <script-name> --lang <language>    Open new script with specified language in editor.\n" +
+			"yasm create --lang <language> <script-name>    Open new script with specified language in editor.\n" +
 			"\n" +
 			"To view available languages, run:\n" +
 			"    yasm --list-languages\n" +

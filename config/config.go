@@ -9,10 +9,16 @@ import (
 	toml "github.com/pelletier/go-toml/v2"
 )
 
+type LanguageDef struct {
+	Shebang string `toml:"shebang"`
+	Comment string `toml:"comment"`
+}
+
 type Config struct {
-	ScriptsDir       string `toml:"scripts-dir"`
-	Editor           string `toml:"editor"`
-	AddScriptsToPath bool   `toml:"add-scripts-to-path"`
+	ScriptsDir       string                 `toml:"scripts-dir"`
+	Editor           string                 `toml:"editor"`
+	AddScriptsToPath bool                   `toml:"add-scripts-to-path"`
+	Languages        map[string]LanguageDef `toml:"languages"`
 }
 
 var loadedConfig *Config
@@ -101,6 +107,20 @@ func expandPath(path string) string {
 		}
 	}
 	return os.ExpandEnv(path)
+}
+
+func GetLanguages() map[string]LanguageDef {
+	if loadedConfig == nil {
+		LoadConfig()
+	}
+
+	userLangs := make(map[string]LanguageDef, len(loadedConfig.Languages))
+
+	for k, v := range loadedConfig.Languages {
+		userLangs[k] = v
+	}
+
+	return userLangs
 }
 
 // Optional helper for debugging

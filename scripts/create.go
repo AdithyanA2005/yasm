@@ -17,7 +17,9 @@ func CreateScript(name string, lang string) error {
 		lang = "bash"
 	}
 
-	shebang, ok := shebangs[lang]
+	// Get language definitions
+	languages := GetLanguages()
+	langDef, ok := languages[lang]
 	if !ok {
 		return fmt.Errorf("unsupported language: %s", lang)
 	}
@@ -27,24 +29,31 @@ func CreateScript(name string, lang string) error {
 		return fmt.Errorf("failed to create scripts directory: %w", err)
 	}
 
-	// Add extension based on language (optional)
-	// For now, use raw name
+	// Use raw name to create script file
 	scriptPath := filepath.Join(scriptsDir, name)
 
+	// Check if script already exists
 	if _, err := os.Stat(scriptPath); err == nil {
 		return fmt.Errorf("script '%s' already exists", name)
 	}
 
-	// Pre-fill file with shebang
+	// Create and write template content
 	file, err := os.OpenFile(scriptPath, os.O_CREATE|os.O_WRONLY, 0755)
 	if err != nil {
 		return fmt.Errorf("failed to create script: %w", err)
 	}
 	defer file.Close()
 
-	_, err = fmt.Fprintf(file, "%s\n\n", shebang)
+	template := fmt.Sprintf(
+		"%s\n%s %s\n%s %s\n",
+		langDef.Shebang,
+		langDef.Comment, "Script created by yasm",
+		langDef.Comment, "Add your code below",
+	)
+
+	_, err = file.WriteString(template)
 	if err != nil {
-		return fmt.Errorf("failed to write shebang: %w", err)
+		return fmt.Errorf("failed to write to script: %w", err)
 	}
 
 	// Open in editor

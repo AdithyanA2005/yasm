@@ -26,7 +26,7 @@ func createCommand() *cli.Command {
 		Action: func(c *cli.Context) error {
 			if c.Bool("list-languages") {
 				fmt.Println("Supported languages:")
-				for lang, shebang := range scripts.ListSupportedLanguages() {
+				for lang, shebang := range scripts.GetLanguages() {
 					fmt.Printf("  %-8s -> %s\n", lang, shebang)
 				}
 				return nil

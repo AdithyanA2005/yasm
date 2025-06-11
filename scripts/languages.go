@@ -1,6 +1,7 @@
 package scripts
 
 import (
+	"maps"
 	"os"
 	"sort"
 	"yasm/config"
@@ -31,14 +32,10 @@ func GetLanguages() map[string]config.LanguageDef {
 	all := make(map[string]config.LanguageDef)
 
 	// Start with built-in
-	for k, v := range presetLanguages {
-		all[k] = v
-	}
+	maps.Copy(all, presetLanguages)
 
 	// Override or extend with config
-	for k, v := range config.GetLanguages() {
-		all[k] = v
-	}
+	maps.Copy(all, config.GetLanguages())
 
 	return all
 }

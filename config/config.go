@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"maps"
 	"os"
 	"path/filepath"
 	"strings"
@@ -116,9 +117,7 @@ func GetLanguages() map[string]LanguageDef {
 
 	userLangs := make(map[string]LanguageDef, len(loadedConfig.Languages))
 
-	for k, v := range loadedConfig.Languages {
-		userLangs[k] = v
-	}
+	maps.Copy(userLangs, loadedConfig.Languages)
 
 	return userLangs
 }

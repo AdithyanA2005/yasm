@@ -5,6 +5,7 @@ import (
 	"os"
 	"strings"
 	"yasm/cmd/create"
+	"yasm/cmd/remove"
 	"yasm/common"
 	"yasm/config"
 	"yasm/scripts"
@@ -35,7 +36,7 @@ func Execute(args []string) error {
 		Commands: []*cli.Command{
 			create.Command(),
 			editCommand(),
-			deleteCommand(),
+			remove.Command(),
 		},
 		Action: func(c *cli.Context) error {
 			// If to run shell setup, do it and exit the program

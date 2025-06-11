@@ -1,4 +1,4 @@
-package scripts
+package remove
 
 import (
 	"fmt"
@@ -13,7 +13,7 @@ import (
 // If scriptName is empty, it presents a fuzzy finder menu to select a script to delete.
 // The function prompts the user for confirmation before deletion.
 // Returns an error if the script cannot be listed, selected, or deleted.
-func DeleteScript(scriptName string) error {
+func removeScript(scriptName string) error {
 	scriptsDir := config.GetScriptsDir()
 
 	// If scriptname is not given use fuzzy finder to select a script

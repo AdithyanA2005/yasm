@@ -15,6 +15,7 @@ func Execute(args []string) error {
 			config.LoadConfig()
 			return nil
 		},
+		Flags: globalFlags(),
 	}
 
 	return app.Run(args)

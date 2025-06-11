@@ -1,15 +1,16 @@
 package main
 
 import (
-	"fmt"
+	"log"
 	"os"
 	"yasm/cmd"
 )
 
 func main() {
 	err := cmd.Execute(os.Args)
+	// If any error occurs print it
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+		log.Fatalf("error: %v", err)
 		os.Exit(1)
 	}
 }

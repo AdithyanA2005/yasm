@@ -1,4 +1,4 @@
-package scripts
+package cmd
 
 import (
 	"fmt"
@@ -6,7 +6,7 @@ import (
 )
 
 // PrintShellWrapper prints a shell function for interactive command injection
-func PrintShellWrapper(shell string) {
+func generateShellWrapper(shell string) {
 	switch shell {
 	case "bash":
 		fmt.Println(`yasm() {

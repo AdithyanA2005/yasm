@@ -9,7 +9,6 @@ import (
 	"yasm/cmd/remove"
 	"yasm/common"
 	"yasm/config"
-	"yasm/scripts"
 
 	"github.com/urfave/cli/v2"
 )
@@ -42,7 +41,7 @@ func Execute(args []string) error {
 		Action: func(c *cli.Context) error {
 			// If to run shell setup, do it and exit the program
 			if shell := c.String("shell"); shell != "" {
-				scripts.PrintShellWrapper(strings.ToLower(shell))
+				generateShellWrapper(strings.ToLower(shell))
 				os.Exit(0)
 			}
 

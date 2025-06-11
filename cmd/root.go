@@ -22,9 +22,8 @@ func Execute(args []string) error {
 		},
 		Flags: []cli.Flag{
 			&cli.StringFlag{
-				Name:    "shell",
-				Usage:   "Output shell function for injection (bash, zsh, fish)",
-				Aliases: []string{"s"},
+				Name:  "shell",
+				Usage: "Output shell function for injection (bash, zsh, fish)",
 			},
 		},
 		Commands: []*cli.Command{

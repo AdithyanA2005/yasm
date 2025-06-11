@@ -17,6 +17,7 @@ func Execute(args []string) error {
 		},
 		Flags: globalFlags(),
 		Commands: []*cli.Command{
+			createCommand(),
 			editCommand(),
 			deleteCommand(),
 		},

@@ -21,6 +21,7 @@ func Execute(args []string) error {
 			editCommand(),
 			deleteCommand(),
 		},
+		Action: runAction,
 	}
 
 	return app.Run(args)

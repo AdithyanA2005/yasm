@@ -15,6 +15,7 @@ import (
 func EditScript(scriptName string) error {
 	scriptsDir := config.GetScriptsDir()
 
+	// If scriptname is not given use fuzzy finder to select a script
 	if scriptName == "" {
 		// Read entries in the scripts directory
 		entries, err := os.ReadDir(scriptsDir)

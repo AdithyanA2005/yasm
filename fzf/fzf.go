@@ -7,7 +7,6 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
-	"yasm/common"
 	"yasm/config"
 	"yasm/metadata"
 )
@@ -62,7 +61,7 @@ func FuzzySelectScript() (string, error) {
 			filename := entry.Name()
 			fullPath := filepath.Join(scriptsDir, filename)
 
-			commentChar, err := common.DetectCommentChar(fullPath)
+			commentChar, err := metadata.ExtractCommentChar(fullPath)
 			if err != nil {
 				log.Printf("Failed to detect comment character: %v", err)
 				commentChar = "#" // fallback

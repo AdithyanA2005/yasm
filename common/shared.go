@@ -1,11 +1,9 @@
 package common
 
 import (
-	"bufio"
 	"maps"
 	"os"
 	"sort"
-	"strings"
 	"yasm/config"
 
 	"github.com/olekukonko/tablewriter"
@@ -68,27 +66,4 @@ func PrintLanguagesTable() {
 	}
 
 	table.Render()
-}
-
-func DetectCommentChar(path string) (string, error) {
-	file, err := os.Open(path)
-	if err != nil {
-		return "", err
-	}
-	defer file.Close()
-
-	scanner := bufio.NewScanner(file)
-	if !scanner.Scan() {
-		return "", nil // empty file
-	}
-	firstLine := scanner.Text()
-
-	for _, lang := range GetLanguages() {
-		if strings.TrimSpace(firstLine) == strings.TrimSpace(lang.Shebang) {
-			return lang.Comment, nil
-		}
-	}
-
-	// fallback
-	return "#", nil
 }

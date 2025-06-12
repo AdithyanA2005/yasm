@@ -5,7 +5,6 @@ import (
 	"os"
 	"path/filepath"
 	"yasm/config"
-	"yasm/fzf"
 	"yasm/utils"
 )
 
@@ -15,22 +14,6 @@ import (
 // Returns an error if the script cannot be listed, selected, or deleted.
 func removeScript(scriptName string) error {
 	scriptsDir := config.GetScriptsDir()
-
-	// If scriptname is not given use fuzzy finder to select a script
-	if scriptName == "" {
-		var err error
-
-		// Fuzzy select a script if no name provided
-		scriptName, err = fzf.FuzzySelectScript()
-		if err != nil {
-			return err
-		}
-
-		// If no script was selected, return nil (no error)
-		if scriptName == "" {
-			return nil
-		}
-	}
 
 	// Take user confirmation before deleting the script
 	scriptPath := filepath.Join(scriptsDir, scriptName)

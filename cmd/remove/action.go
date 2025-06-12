@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"yasm/config"
+	"yasm/usercfg"
 	"yasm/utils"
 )
 
@@ -13,7 +13,7 @@ import (
 // The function prompts the user for confirmation before deletion.
 // Returns an error if the script cannot be listed, selected, or deleted.
 func removeScript(scriptName string) error {
-	scriptsDir := config.GetScriptsDir()
+	scriptsDir := usercfg.GetScriptsDir()
 
 	// Take user confirmation before deleting the script
 	scriptPath := filepath.Join(scriptsDir, scriptName)

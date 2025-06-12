@@ -8,8 +8,8 @@ import (
 	"yasm/cmd/edit"
 	"yasm/cmd/remove"
 	"yasm/cmd/run"
-	"yasm/config"
 	"yasm/script"
+	"yasm/usercfg"
 
 	"github.com/urfave/cli/v2"
 )
@@ -20,7 +20,7 @@ func Execute(args []string) error {
 		Usage:   "Yet Another Script Manager",
 		Version: "0.1.0",
 		Before: func(c *cli.Context) error {
-			config.LoadConfig()
+			usercfg.LoadConfig()
 			return nil
 		},
 		Flags: []cli.Flag{

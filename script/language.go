@@ -4,13 +4,13 @@ import (
 	"maps"
 	"os"
 	"sort"
-	"yasm/config"
+	"yasm/usercfg"
 
 	"github.com/olekukonko/tablewriter"
 )
 
 // Preset languages with default shebangs and comments
-var presetLanguages = map[string]config.LanguageDef{
+var presetLanguages = map[string]usercfg.LanguageDef{
 	"bash": {
 		Shebang: "#!/usr/bin/env bash",
 		Comment: "#",
@@ -32,14 +32,14 @@ var presetLanguages = map[string]config.LanguageDef{
 // GetLanguages returns a map of all available language definitions.
 // It starts with built-in preset languages and then overrides or extends them
 // with any user-defined languages from the configuration.
-func GetLanguages() map[string]config.LanguageDef {
-	all := make(map[string]config.LanguageDef)
+func GetLanguages() map[string]usercfg.LanguageDef {
+	all := make(map[string]usercfg.LanguageDef)
 
 	// Start with built-in
 	maps.Copy(all, presetLanguages)
 
 	// Override or extend with config
-	maps.Copy(all, config.GetLanguages())
+	maps.Copy(all, usercfg.GetLanguages())
 
 	return all
 }

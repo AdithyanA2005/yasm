@@ -7,8 +7,8 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
-	"yasm/config"
 	"yasm/script"
+	"yasm/usercfg"
 )
 
 // FuzzySelect presents a list of entries to the user using the fzf fuzzy finder.
@@ -41,7 +41,7 @@ func FuzzySelect(scripts []string) (string, error) {
 // FuzzySelectScript presents a list of scripts to the user from which
 // user can select one using the fzf fuzzy finder.
 func FuzzySelectScript() (string, error) {
-	scriptsDir := config.GetScriptsDir()
+	scriptsDir := usercfg.GetScriptsDir()
 	entries, err := os.ReadDir(scriptsDir)
 	if err != nil {
 		return "", fmt.Errorf("failed to list scripts: %w", err)

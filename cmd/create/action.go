@@ -5,8 +5,8 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"yasm/config"
 	"yasm/script"
+	"yasm/usercfg"
 )
 
 // createScript creates a new script file with the specified name and language.
@@ -29,7 +29,7 @@ func createScript(scriptName string, lang string) error {
 	}
 
 	// Ensure the scripts directory exists
-	scriptsDir := config.GetScriptsDir()
+	scriptsDir := usercfg.GetScriptsDir()
 	if err := os.MkdirAll(scriptsDir, 0755); err != nil {
 		return fmt.Errorf("failed to create scripts directory: %w", err)
 	}
@@ -59,7 +59,7 @@ func createScript(scriptName string, lang string) error {
 	}
 
 	// Open in editor
-	editor := config.GetEditor()
+	editor := usercfg.GetEditor()
 	cmd := exec.Command(editor, scriptPath)
 	cmd.Stdin = os.Stdin
 	cmd.Stdout = os.Stdout

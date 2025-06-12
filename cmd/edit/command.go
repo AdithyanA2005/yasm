@@ -1,6 +1,8 @@
 package edit
 
 import (
+	"yasm/fzf"
+
 	"github.com/urfave/cli/v2"
 )
 
@@ -17,6 +19,23 @@ func Command() *cli.Command {
 
 		Action: func(c *cli.Context) error {
 			scriptName := c.Args().First()
+
+			if scriptName == "" {
+				// Fuzzy select a script if it was not provided as an argument
+				selected, err := fzf.FuzzySelectScript()
+				if err != nil {
+					return err
+				}
+
+				// If no script was selected, return nil (no error)
+				if selected == "" {
+					return nil
+				}
+
+				// Update scriptName to the selected script
+				scriptName = selected
+			}
+
 			return editScript(scriptName)
 		},
 	}

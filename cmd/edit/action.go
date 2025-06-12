@@ -6,7 +6,6 @@ import (
 	"os/exec"
 	"path/filepath"
 	"yasm/config"
-	"yasm/fzf"
 )
 
 // EditScript opens the specified script in the user's configured editor.
@@ -14,22 +13,6 @@ import (
 // Returns an error if the script cannot be found, listed, or opened in the editor.
 func editScript(scriptName string) error {
 	scriptsDir := config.GetScriptsDir()
-
-	// If scriptname is not given use fuzzy finder to select a script
-	if scriptName == "" {
-		var err error
-
-		// Fuzzy select a script if no name provided
-		scriptName, err = fzf.FuzzySelectScript()
-		if err != nil {
-			return err
-		}
-
-		// If no script was selected, return nil (no error)
-		if scriptName == "" {
-			return nil
-		}
-	}
 
 	// Prepare and run the editor command to open the script.
 	// The editor is launched with the script path, and its standard input,

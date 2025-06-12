@@ -47,6 +47,9 @@ func Execute(args []string) error {
 			}
 
 			return nil
+		CommandNotFound: func(c *cli.Context, command string) {
+			fmt.Fprintf(os.Stderr, "Error: '%s' is not a valid command.\n\n", command)
+			cli.ShowAppHelp(c)
 		},
 	}
 

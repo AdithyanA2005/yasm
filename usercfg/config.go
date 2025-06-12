@@ -4,9 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"sort"
 
-	"github.com/olekukonko/tablewriter"
 	toml "github.com/pelletier/go-toml/v2"
 )
 
@@ -73,28 +71,4 @@ func ensureConfigLoaded() {
 	if loadedConfig == nil {
 		InitConfig()
 	}
-}
-
-// PrintLanguagesTable prints a table of all supported languages to standard output.
-// The table includes the language name, its shebang line, and the comment prefix.
-// Languages are listed in sorted order for consistent output.
-func PrintLanguagesTable() {
-	langs := GetLanguages()
-
-	table := tablewriter.NewWriter(os.Stdout)
-	table.Header([]string{"Language", "Shebang", "Comment"})
-
-	// Sort keys for consistent output
-	keys := make([]string, 0, len(langs))
-	for lang := range langs {
-		keys = append(keys, lang)
-	}
-	sort.Strings(keys)
-
-	for _, lang := range keys {
-		def := langs[lang]
-		table.Append([]string{lang, def.Shebang, def.Comment})
-	}
-
-	table.Render()
 }

@@ -28,14 +28,14 @@ func listLanguages() *cli.Command {
 func renderLanguageTable() {
 	langs := usercfg.GetLanguages()
 	headers := []string{"Language", "Shebang", "Comment"}
-	rows := buildLanguagesTableRows(langs)
+	rows := flattenLanguages(langs)
 	utils.RenderTable(os.Stdout, headers, rows)
 }
 
-// buildLanguagesTableRows constructs the rows for the languages table.
+// flattenLanguages constructs the rows for the languages table.
 // It takes a map of language names to LanguageDef structs and returns a slice of string slices,
 // where each inner slice represents a row containing the language name, its shebang, and comment style.
-func buildLanguagesTableRows(langs map[string]usercfg.LanguageDef) [][]string {
+func flattenLanguages(langs map[string]usercfg.LanguageDef) [][]string {
 	keys := make([]string, 0, len(langs))
 	for lang := range langs {
 		keys = append(keys, lang)

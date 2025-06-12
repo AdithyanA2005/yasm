@@ -9,7 +9,6 @@ import (
 	"yasm/cmd/edit"
 	"yasm/cmd/remove"
 	"yasm/cmd/run"
-	"yasm/script"
 	"yasm/usercfg"
 
 	"github.com/urfave/cli/v2"
@@ -29,11 +28,6 @@ func Execute(args []string) error {
 				Name:  "shell",
 				Usage: "Output shell function for injection (bash, zsh, fish)",
 			},
-			&cli.BoolFlag{
-				Name:    "list-languages",
-				Aliases: []string{"l"},
-				Usage:   "Show supported script languages",
-			},
 		},
 		DefaultCommand: "run",
 		Commands: []*cli.Command{
@@ -50,11 +44,6 @@ func Execute(args []string) error {
 				os.Exit(0)
 			}
 
-			// Handle list-languages flag
-			if c.Bool("list-languages") {
-				fmt.Println("Supported languages:")
-				script.PrintLanguagesTable()
-				return nil
 			}
 
 			return nil

@@ -12,12 +12,6 @@ import (
 	toml "github.com/pelletier/go-toml/v2"
 )
 
-var (
-	userHomeDir   string
-	userConfigDir string
-	loadedConfig  *ConfigDef
-)
-
 // InitConfig initializes user directories and loads the configuration file.
 // It exits if user directories can't be determined or a config file exists but can't be parsed.
 // If no config file is found, it falls back to an empty config.

@@ -1,5 +1,14 @@
 package usercfg
 
+var (
+	loadedConfig *ConfigDef
+
+	// Users env variables
+	userHomeDir   string
+	userConfigDir string
+	userEditor    string
+)
+
 type LanguageDef struct {
 	Shebang string `toml:"shebang"`
 	Comment string `toml:"comment"`

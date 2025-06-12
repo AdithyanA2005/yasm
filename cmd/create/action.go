@@ -21,11 +21,6 @@ func createScript(scriptName string, lang string) error {
 		return err
 	}
 
-	// If no language is specified, default to "bash"
-	if lang == "" {
-		lang = "bash"
-	}
-
 	// Get language definitions
 	languages := script.GetLanguages()
 	langDef, ok := languages[lang]

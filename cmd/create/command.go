@@ -30,12 +30,18 @@ func Command() *cli.Command {
 			"    yasm config languages",
 
 		Action: func(c *cli.Context) error {
+			// Get the script name from the command arguments
 			scriptName := c.Args().First()
 			if scriptName == "" {
 				return cli.Exit("Please provide a script name.", 1)
 			}
 
+			// If no language is specified by command, default to "bash"
 			lang := c.String("lang")
+			if lang == "" {
+				lang = "bash"
+			}
+
 			return createScript(scriptName, lang)
 		},
 	}

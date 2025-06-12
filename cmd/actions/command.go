@@ -10,6 +10,7 @@ func Command() *cli.Command {
 		Usage: "Actions to manage scripts and configurations",
 		Subcommands: []*cli.Command{
 			listLanguages(),
+			showConfigs(),
 		},
 
 		Action: func(c *cli.Context) error {

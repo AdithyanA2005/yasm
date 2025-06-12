@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"yasm/cmd/actions"
 	"yasm/cmd/create"
 	"yasm/cmd/edit"
 	"yasm/cmd/remove"
@@ -40,6 +41,7 @@ func Execute(args []string) error {
 			run.Command(),
 			edit.Command(),
 			remove.Command(),
+			actions.Command(),
 		},
 		Action: func(c *cli.Context) error {
 			// If to run shell setup, do it and exit the program

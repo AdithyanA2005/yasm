@@ -20,7 +20,7 @@ func Execute(args []string) error {
 		Usage:   "Yet Another Script Manager",
 		Version: "0.1.0",
 		Before: func(c *cli.Context) error {
-			usercfg.LoadConfig()
+			usercfg.InitConfig()
 			return nil
 		},
 		Flags: []cli.Flag{

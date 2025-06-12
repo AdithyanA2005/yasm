@@ -18,7 +18,7 @@ var (
 	loadedConfig  *ConfigDef
 )
 
-func LoadConfig() {
+func InitConfig() {
 	var err error
 
 	userHomeDir, err = os.UserHomeDir()

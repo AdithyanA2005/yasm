@@ -5,8 +5,8 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"yasm/common"
 	"yasm/config"
+	"yasm/script"
 )
 
 // createScript creates a new script file with the specified name and language.
@@ -33,7 +33,7 @@ func createScript(scriptName string, lang string) error {
 	}
 
 	// Get language definitions
-	languages := common.GetLanguages()
+	languages := script.GetLanguages()
 	langDef, ok := languages[lang]
 	if !ok {
 		return fmt.Errorf("unsupported language: %s", lang)

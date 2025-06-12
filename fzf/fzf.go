@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"strings"
 	"yasm/config"
-	"yasm/metadata"
+	"yasm/script"
 )
 
 // FuzzySelect presents a list of entries to the user using the fzf fuzzy finder.
@@ -61,7 +61,7 @@ func FuzzySelectScript() (string, error) {
 			filename := entry.Name()
 			fullPath := filepath.Join(scriptsDir, filename)
 
-			commentChar, err := metadata.ExtractCommentChar(fullPath)
+			commentChar, err := script.ExtractCommentChar(fullPath)
 			if err != nil {
 				log.Printf("Failed to detect comment character: %v", err)
 				commentChar = "#" // fallback
@@ -69,7 +69,7 @@ func FuzzySelectScript() (string, error) {
 
 			// commentChar := "#" // fallback
 
-			meta, err := metadata.ExtractMetadata(fullPath, commentChar)
+			meta, err := script.ExtractMetadata(fullPath, commentChar)
 			title := meta.Title
 			if err != nil || title == "" {
 				title = ""

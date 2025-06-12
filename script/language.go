@@ -1,4 +1,4 @@
-package common
+package script
 
 import (
 	"maps"

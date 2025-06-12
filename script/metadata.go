@@ -1,10 +1,9 @@
-package metadata
+package script
 
 import (
 	"bufio"
 	"os"
 	"strings"
-	"yasm/common"
 )
 
 type Metadata struct {
@@ -81,7 +80,7 @@ func ExtractCommentChar(path string) (string, error) {
 	}
 	firstLine := scanner.Text()
 
-	for _, lang := range common.GetLanguages() {
+	for _, lang := range GetLanguages() {
 		if strings.TrimSpace(firstLine) == strings.TrimSpace(lang.Shebang) {
 			return lang.Comment, nil
 		}

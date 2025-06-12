@@ -7,9 +7,9 @@ import (
 	"yasm/cmd/create"
 	"yasm/cmd/edit"
 	"yasm/cmd/remove"
-	"yasm/common"
 	"yasm/config"
 	"yasm/fzf"
+	"yasm/script"
 
 	"github.com/urfave/cli/v2"
 )
@@ -49,7 +49,7 @@ func Execute(args []string) error {
 			// Handle list-languages flag
 			if c.Bool("list-languages") {
 				fmt.Println("Supported languages:")
-				common.PrintLanguagesTable()
+				script.PrintLanguagesTable()
 				return nil
 			}
 

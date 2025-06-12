@@ -6,7 +6,6 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
-	"strings"
 
 	"github.com/olekukonko/tablewriter"
 	toml "github.com/pelletier/go-toml/v2"
@@ -69,17 +68,6 @@ func readTomlFile(path string) (*ConfigDef, error) {
 	}
 
 	return &cfg, nil
-}
-
-// expandPath replaces ~ with full home path
-func expandPath(path string) string {
-	if strings.HasPrefix(path, "~") {
-		home := os.Getenv("HOME")
-		if home != "" {
-			path = filepath.Join(home, path[1:])
-		}
-	}
-	return os.ExpandEnv(path)
 }
 
 func getLanguages() map[string]LanguageDef {

@@ -2,6 +2,7 @@ package usercfg
 
 import (
 	"path/filepath"
+	"yasm/utils"
 )
 
 // GetEditor returns the preferred text editor.
@@ -29,7 +30,7 @@ func GetScriptsDir() string {
 	ensureConfigLoaded()
 
 	if scriptsDir := loadedConfig.ScriptsDir; scriptsDir != "" {
-		return expandPath(scriptsDir)
+		return utils.ExpandUserPath(scriptsDir)
 	} else {
 		return filepath.Join(UserHomeDir, DefaultScriptsDir)
 	}

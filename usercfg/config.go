@@ -2,7 +2,6 @@ package usercfg
 
 import (
 	"fmt"
-	"maps"
 	"os"
 	"path/filepath"
 	"sort"
@@ -70,18 +69,6 @@ func readTomlFile(path string) (*ConfigDef, error) {
 	return &cfg, nil
 }
 
-func getLanguages() map[string]LanguageDef {
-	if loadedConfig == nil {
-		InitConfig()
-	}
-
-	userLangs := make(map[string]LanguageDef, len(loadedConfig.Languages))
-
-	maps.Copy(userLangs, loadedConfig.Languages)
-
-	return userLangs
-}
-
 // Optional helper for debugging
 func PrintLoadedConfig() {
 	if loadedConfig == nil {
@@ -108,21 +95,6 @@ var PresetLanguages = map[string]LanguageDef{
 		Shebang: "#!/usr/bin/env zsh",
 		Comment: "#",
 	},
-}
-
-// GetLanguages returns a map of all available language definitions.
-// It starts with built-in preset languages and then overrides or extends them
-// with any user-defined languages from the configuration.
-func GetLanguages() map[string]LanguageDef {
-	all := make(map[string]LanguageDef)
-
-	// Start with built-in
-	maps.Copy(all, PresetLanguages)
-
-	// Override or extend with config
-	maps.Copy(all, getLanguages())
-
-	return all
 }
 
 func ensureConfigLoaded() {

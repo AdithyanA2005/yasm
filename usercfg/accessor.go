@@ -1,6 +1,7 @@
 package usercfg
 
 import (
+	"maps"
 	"path/filepath"
 	"yasm/utils"
 )
@@ -42,4 +43,17 @@ func ShouldAddScriptsToPath() bool {
 	ensureConfigLoaded()
 
 	return loadedConfig.AddScriptsToPath
+}
+
+// GetLanguages returns a map of all available language definitions.
+// It merges built-in preset languages with any user-defined overrides or extensions
+// from the loaded configuration. User-defined languages take precedence.
+func GetLanguages() map[string]LanguageDef {
+	ensureConfigLoaded()
+
+	all := make(map[string]LanguageDef)
+	maps.Copy(all, PresetLanguages)
+	maps.Copy(all, loadedConfig.Languages)
+
+	return all
 }

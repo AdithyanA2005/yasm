@@ -66,9 +66,3 @@ func readTomlFile(path string) (*ConfigDef, error) {
 
 	return &cfg, nil
 }
-
-func ensureConfigLoaded() {
-	if LoadedConfig == nil {
-		InitConfig()
-	}
-}

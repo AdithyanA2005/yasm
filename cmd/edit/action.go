@@ -13,11 +13,21 @@ import (
 // Returns an error if the script cannot be found, listed, or opened in the editor.
 func editScript(scriptName string) error {
 	scriptsDir := usercfg.GetScriptsDir()
+	scriptPath := filepath.Join(scriptsDir, scriptName)
+
+	// Check if the file exists and is not a directory
+	info, err := os.Stat(scriptPath)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return fmt.Errorf("script not found: %s", scriptPath)
+		}
+		return fmt.Errorf("error checking script file: %w", err)
+	}
+	if info.IsDir() {
+		return fmt.Errorf("expected a file but found a directory: %s", scriptPath)
+	}
 
 	// Prepare and run the editor command to open the script.
-	// The editor is launched with the script path, and its standard input,
-	// output, and error are connected to the current process.
-	scriptPath := filepath.Join(scriptsDir, scriptName)
 	editor := usercfg.GetEditor()
 	cmd := exec.Command(editor, scriptPath)
 	cmd.Stdin = os.Stdin

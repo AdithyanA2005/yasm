@@ -14,8 +14,8 @@ import (
 func GetEditor() string {
 	ensureConfigLoaded()
 
-	if loadedConfig.Editor != "" {
-		return loadedConfig.Editor
+	if LoadedConfig.Editor != "" {
+		return LoadedConfig.Editor
 	} else if UserEditor != "" {
 		return UserEditor
 	} else {
@@ -30,7 +30,7 @@ func GetEditor() string {
 func GetScriptsDir() string {
 	ensureConfigLoaded()
 
-	if scriptsDir := loadedConfig.ScriptsDir; scriptsDir != "" {
+	if scriptsDir := LoadedConfig.ScriptsDir; scriptsDir != "" {
 		return utils.ExpandUserPath(scriptsDir)
 	} else {
 		return filepath.Join(UserHomeDir, DefaultScriptsDir)
@@ -42,7 +42,7 @@ func GetScriptsDir() string {
 func ShouldAddScriptsToPath() bool {
 	ensureConfigLoaded()
 
-	return loadedConfig.AddScriptsToPath
+	return LoadedConfig.AddScriptsToPath
 }
 
 // GetLanguages returns a map of all available language definitions.
@@ -53,7 +53,7 @@ func GetLanguages() map[string]LanguageDef {
 
 	all := make(map[string]LanguageDef)
 	maps.Copy(all, PresetLanguages)
-	maps.Copy(all, loadedConfig.Languages)
+	maps.Copy(all, LoadedConfig.Languages)
 
 	return all
 }

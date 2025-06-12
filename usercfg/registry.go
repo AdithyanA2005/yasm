@@ -1,7 +1,7 @@
 package usercfg
 
 var (
-	loadedConfig *ConfigDef
+	LoadedConfig *ConfigDef
 
 	// Users env variables
 	UserHomeDir   string

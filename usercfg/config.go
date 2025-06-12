@@ -38,7 +38,7 @@ func InitConfig() {
 	// Try to load config from the first valid file
 	for _, path := range configPaths {
 		if cfg, err := readTomlFile(path); err == nil {
-			loadedConfig = cfg
+			LoadedConfig = cfg
 			return
 		} else if !os.IsNotExist(err) {
 			fmt.Fprintf(os.Stderr, "Error: Failed to load config from %s: %v\n", path, err)
@@ -47,7 +47,7 @@ func InitConfig() {
 	}
 
 	// Fallback to empty config
-	loadedConfig = &ConfigDef{}
+	LoadedConfig = &ConfigDef{}
 }
 
 // readTomlFile reads a TOML configuration file from the given path,
@@ -68,7 +68,7 @@ func readTomlFile(path string) (*ConfigDef, error) {
 }
 
 func ensureConfigLoaded() {
-	if loadedConfig == nil {
+	if LoadedConfig == nil {
 		InitConfig()
 	}
 }

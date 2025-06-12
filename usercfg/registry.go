@@ -4,9 +4,15 @@ var (
 	loadedConfig *ConfigDef
 
 	// Users env variables
-	userHomeDir   string
-	userConfigDir string
-	userEditor    string
+	UserHomeDir   string
+	UserConfigDir string
+	UserEditor    string
+)
+
+const (
+	// Default values
+	DefaultEditor     = "nano"
+	DefaultScriptsDir = "scripts"
 )
 
 type LanguageDef struct {

@@ -19,14 +19,14 @@ func InitConfig() {
 	var err error
 
 	// Get user's home directory
-	userHomeDir, err = os.UserHomeDir()
+	UserHomeDir, err = os.UserHomeDir()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: could not determine home directory:  %v\n", err)
 		os.Exit(1)
 	}
 
 	// Get user's config directory
-	userConfigDir, err = os.UserConfigDir()
+	UserConfigDir, err = os.UserConfigDir()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: could not determine config directory:  %v\n", err)
 		os.Exit(1)
@@ -34,9 +34,9 @@ func InitConfig() {
 
 	// Possible config file paths
 	configPaths := []string{
-		filepath.Join(userConfigDir, "yasm", "config.toml"),
-		filepath.Join(userHomeDir, ".config", "yasm", "config.toml"),
-		filepath.Join(userHomeDir, "yasm", "config.toml"),
+		filepath.Join(UserConfigDir, "yasm", "config.toml"),
+		filepath.Join(UserHomeDir, ".config", "yasm", "config.toml"),
+		filepath.Join(UserHomeDir, "yasm", "config.toml"),
 	}
 
 	// Try to load config from the first valid file
@@ -54,7 +54,9 @@ func InitConfig() {
 	loadedConfig = &ConfigDef{}
 }
 
-
+// readTomlFile reads a TOML configuration file from the given path,
+// unmarshals its contents into a ConfigDef struct, and returns a pointer to it.
+// Returns an error if the file cannot be read or if unmarshalling fails.
 func readTomlFile(path string) (*ConfigDef, error) {
 	data, err := os.ReadFile(path)
 	if err != nil {
@@ -67,43 +69,6 @@ func readTomlFile(path string) (*ConfigDef, error) {
 	}
 
 	return &cfg, nil
-}
-
-func GetEditor() string {
-	if loadedConfig == nil {
-		LoadConfig()
-	}
-
-	if loadedConfig.Editor != "" {
-		return loadedConfig.Editor
-	}
-
-	editor := os.Getenv("EDITOR")
-	if editor != "" {
-		return editor
-	}
-
-	return "nano"
-}
-
-func GetScriptsDir() string {
-	if loadedConfig == nil {
-		LoadConfig()
-	}
-
-	sd := loadedConfig.ScriptsDir
-	if sd != "" {
-		return expandPath(sd)
-	}
-
-	return filepath.Join(os.Getenv("HOME"), "scripts")
-}
-
-func IsAddScriptsToPathEnabled() bool {
-	if loadedConfig == nil {
-		LoadConfig()
-	}
-	return loadedConfig.AddScriptsToPath
 }
 
 // expandPath replaces ~ with full home path
@@ -119,7 +84,7 @@ func expandPath(path string) string {
 
 func getLanguages() map[string]LanguageDef {
 	if loadedConfig == nil {
-		LoadConfig()
+		InitConfig()
 	}
 
 	userLangs := make(map[string]LanguageDef, len(loadedConfig.Languages))
@@ -132,7 +97,7 @@ func getLanguages() map[string]LanguageDef {
 // Optional helper for debugging
 func PrintLoadedConfig() {
 	if loadedConfig == nil {
-		LoadConfig()
+		InitConfig()
 	}
 	fmt.Printf("Loaded Config: %+v\n", *loadedConfig)
 }
@@ -174,7 +139,7 @@ func GetLanguages() map[string]LanguageDef {
 
 func ensureConfigLoaded() {
 	if loadedConfig == nil {
-		LoadConfig()
+		InitConfig()
 	}
 }
 

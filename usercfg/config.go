@@ -69,14 +69,6 @@ func readTomlFile(path string) (*ConfigDef, error) {
 	return &cfg, nil
 }
 
-// Optional helper for debugging
-func PrintLoadedConfig() {
-	if loadedConfig == nil {
-		InitConfig()
-	}
-	fmt.Printf("Loaded Config: %+v\n", *loadedConfig)
-}
-
 func ensureConfigLoaded() {
 	if loadedConfig == nil {
 		InitConfig()
@@ -106,4 +98,3 @@ func PrintLanguagesTable() {
 
 	table.Render()
 }
-

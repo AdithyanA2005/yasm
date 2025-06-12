@@ -12,24 +12,35 @@ import (
 	toml "github.com/pelletier/go-toml/v2"
 )
 
-var loadedConfig *ConfigDef
+var (
+	userHomeDir   string
+	userConfigDir string
+	loadedConfig  *ConfigDef
+)
 
-type LanguageDef struct {
-	Shebang string `toml:"shebang"`
-	Comment string `toml:"comment"`
-}
-
-type ConfigDef struct {
-	ScriptsDir       string                 `toml:"scripts-dir"`
-	Editor           string                 `toml:"editor"`
-	AddScriptsToPath bool                   `toml:"add-scripts-to-path"`
-	Languages        map[string]LanguageDef `toml:"languages"`
-}
-
-// LoadConfig looks for config.toml in standard locations and loads it
 func LoadConfig() {
-	for _, path := range getConfigSearchPaths() {
-		if cfg, err := tryLoadConfigFile(path); err == nil {
+	var err error
+
+	userHomeDir, err = os.UserHomeDir()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error: could not determine home directory:  %v\n", err)
+		os.Exit(1)
+	}
+
+	userConfigDir, err = os.UserConfigDir()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Error: could not determine config directory:  %v\n", err)
+		os.Exit(1)
+	}
+
+	configPaths := []string{
+		filepath.Join(userConfigDir, "yasm", "config.toml"),
+		filepath.Join(userHomeDir, ".config", "yasm", "config.toml"),
+		filepath.Join(userHomeDir, "yasm", "config.toml"),
+	}
+
+	for _, path := range configPaths {
+		if cfg, err := readTomlFile(path); err == nil {
 			loadedConfig = cfg
 			return
 		} else if !os.IsNotExist(err) {
@@ -41,18 +52,8 @@ func LoadConfig() {
 	loadedConfig = &ConfigDef{}
 }
 
-func getConfigSearchPaths() []string {
-	homeDir, _ := os.UserHomeDir()
-	configDir, _ := os.UserConfigDir()
 
-	return []string{
-		filepath.Join(configDir, "yasm", "config.toml"),
-		filepath.Join(homeDir, ".config", "yasm", "config.toml"),
-		filepath.Join(homeDir, "yasm", "config.toml"),
-	}
-}
-
-func tryLoadConfigFile(path string) (*ConfigDef, error) {
+func readTomlFile(path string) (*ConfigDef, error) {
 	data, err := os.ReadFile(path)
 	if err != nil {
 		return nil, err

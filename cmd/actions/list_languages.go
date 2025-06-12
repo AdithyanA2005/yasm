@@ -17,15 +17,19 @@ func listLanguages() *cli.Command {
 		Aliases: []string{"ll"},
 		Action: func(c *cli.Context) error {
 			fmt.Println("Supported languages:")
-
-			langs := usercfg.GetLanguages()
-			headers := []string{"Language", "Shebang", "Comment"}
-			rows := buildLanguagesTableRows(langs)
-			utils.RenderTable(os.Stdout, headers, rows)
-
+			renderLanguageTable()
 			return nil
 		},
 	}
+}
+
+// renderLanguageTable renders a table listing all supported languages, including both user-defined and preset languages.
+// It retrieves the complete set of languages, builds the table rows, and outputs the table to standard output.
+func renderLanguageTable() {
+	langs := usercfg.GetLanguages()
+	headers := []string{"Language", "Shebang", "Comment"}
+	rows := buildLanguagesTableRows(langs)
+	utils.RenderTable(os.Stdout, headers, rows)
 }
 
 // buildLanguagesTableRows constructs the rows for the languages table.

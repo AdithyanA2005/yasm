@@ -12,7 +12,7 @@ import (
 func showConfigs() *cli.Command {
 	return &cli.Command{
 		Name:    "show-configs",
-		Usage:   "Show all options there value and default(fallback) value",
+		Usage:   "Display current configuration and language settings",
 		Aliases: []string{"sc"},
 		Action: func(c *cli.Context) error {
 			fmt.Println("Configuration:")

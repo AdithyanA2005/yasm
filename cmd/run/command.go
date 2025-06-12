@@ -12,10 +12,10 @@ import (
 func Command() *cli.Command {
 	return &cli.Command{
 		Name:  "run",
-		Usage: "Run a particular script",
+		Usage: "Run an existing script",
 		UsageText: "" +
-			"yasm run                Open a menu to select the script to run.\n" +
-			"yasm run <script-name>  Directly run the script with the given name.",
+			"yasm run                Open interactive menu to select the run\n" +
+			"yasm run <script-name>  Run the script with specified name",
 
 		Action: func(c *cli.Context) error {
 			scriptName := c.Args().First()

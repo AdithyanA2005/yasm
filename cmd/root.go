@@ -19,6 +19,9 @@ func Execute(args []string) error {
 		Name:    "yasm",
 		Usage:   "Yet Another Script Manager",
 		Version: "0.1.0",
+		UsageText: "" +
+			"yasm                    Opens an interactive menu to run a script\n" +
+			"yasm [command options]  Use --help to see usage of particular command",
 		Before: func(c *cli.Context) error {
 			usercfg.InitConfig()
 			return nil

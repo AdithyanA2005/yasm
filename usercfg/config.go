@@ -5,57 +5,61 @@ import (
 	"maps"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 
+	"github.com/olekukonko/tablewriter"
 	toml "github.com/pelletier/go-toml/v2"
 )
+
+var loadedConfig *ConfigDef
 
 type LanguageDef struct {
 	Shebang string `toml:"shebang"`
 	Comment string `toml:"comment"`
 }
 
-type Config struct {
+type ConfigDef struct {
 	ScriptsDir       string                 `toml:"scripts-dir"`
 	Editor           string                 `toml:"editor"`
 	AddScriptsToPath bool                   `toml:"add-scripts-to-path"`
 	Languages        map[string]LanguageDef `toml:"languages"`
 }
 
-var loadedConfig *Config
-
 // LoadConfig looks for config.toml in standard locations and loads it
 func LoadConfig() {
-	configPaths := []string{
-		filepath.Join(os.Getenv("XDG_CONFIG_HOME"), "yasm", "config.toml"),
-		filepath.Join(os.Getenv("HOME"), ".config", "yasm", "config.toml"),
-		filepath.Join(os.Getenv("HOME"), "yasm", "config.toml"),
-	}
-
-	for _, path := range configPaths {
-		if _, err := os.Stat(path); err == nil {
-			cfg, err := parseConfigFile(path)
-			if err == nil {
-				loadedConfig = cfg
-				return
-			}
-			fmt.Fprintf(os.Stderr, "Failed to parse config file %s: %v\n", path, err)
+	for _, path := range getConfigSearchPaths() {
+		if cfg, err := tryLoadConfigFile(path); err == nil {
+			loadedConfig = cfg
+			return
+		} else if !os.IsNotExist(err) {
+			fmt.Fprintf(os.Stderr, "Error: Failed to load config from %s: %v\n", path, err)
 		}
 	}
 
-	// No config found, use empty defaults
-	loadedConfig = &Config{}
+	// Fallback to empty config
+	loadedConfig = &ConfigDef{}
 }
 
-func parseConfigFile(path string) (*Config, error) {
+func getConfigSearchPaths() []string {
+	homeDir, _ := os.UserHomeDir()
+	configDir, _ := os.UserConfigDir()
+
+	return []string{
+		filepath.Join(configDir, "yasm", "config.toml"),
+		filepath.Join(homeDir, ".config", "yasm", "config.toml"),
+		filepath.Join(homeDir, "yasm", "config.toml"),
+	}
+}
+
+func tryLoadConfigFile(path string) (*ConfigDef, error) {
 	data, err := os.ReadFile(path)
 	if err != nil {
 		return nil, err
 	}
 
-	var cfg Config
-	err = toml.Unmarshal(data, &cfg)
-	if err != nil {
+	var cfg ConfigDef
+	if err := toml.Unmarshal(data, &cfg); err != nil {
 		return nil, err
 	}
 
@@ -110,7 +114,7 @@ func expandPath(path string) string {
 	return os.ExpandEnv(path)
 }
 
-func GetLanguages() map[string]LanguageDef {
+func getLanguages() map[string]LanguageDef {
 	if loadedConfig == nil {
 		LoadConfig()
 	}
@@ -128,4 +132,69 @@ func PrintLoadedConfig() {
 		LoadConfig()
 	}
 	fmt.Printf("Loaded Config: %+v\n", *loadedConfig)
+}
+
+// Preset languages with default shebangs and comments
+var PresetLanguages = map[string]LanguageDef{
+	"bash": {
+		Shebang: "#!/usr/bin/env bash",
+		Comment: "#",
+	},
+	"python": {
+		Shebang: "#!/usr/bin/env python3",
+		Comment: "#",
+	},
+	"sh": {
+		Shebang: "#!/bin/sh",
+		Comment: "#",
+	},
+	"zsh": {
+		Shebang: "#!/usr/bin/env zsh",
+		Comment: "#",
+	},
+}
+
+// GetLanguages returns a map of all available language definitions.
+// It starts with built-in preset languages and then overrides or extends them
+// with any user-defined languages from the configuration.
+func GetLanguages() map[string]LanguageDef {
+	all := make(map[string]LanguageDef)
+
+	// Start with built-in
+	maps.Copy(all, PresetLanguages)
+
+	// Override or extend with config
+	maps.Copy(all, getLanguages())
+
+	return all
+}
+
+func ensureConfigLoaded() {
+	if loadedConfig == nil {
+		LoadConfig()
+	}
+}
+
+// PrintLanguagesTable prints a table of all supported languages to standard output.
+// The table includes the language name, its shebang line, and the comment prefix.
+// Languages are listed in sorted order for consistent output.
+func PrintLanguagesTable() {
+	langs := GetLanguages()
+
+	table := tablewriter.NewWriter(os.Stdout)
+	table.Header([]string{"Language", "Shebang", "Comment"})
+
+	// Sort keys for consistent output
+	keys := make([]string, 0, len(langs))
+	for lang := range langs {
+		keys = append(keys, lang)
+	}
+	sort.Strings(keys)
+
+	for _, lang := range keys {
+		def := langs[lang]
+		table.Append([]string{lang, def.Shebang, def.Comment})
+	}
+
+	table.Render()
 }

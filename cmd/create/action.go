@@ -5,7 +5,6 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"yasm/script"
 	"yasm/usercfg"
 )
 
@@ -22,7 +21,7 @@ func createScript(scriptName string, lang string) error {
 	}
 
 	// Get language definitions
-	languages := script.GetLanguages()
+	languages := usercfg.GetLanguages()
 	langDef, ok := languages[lang]
 	if !ok {
 		return fmt.Errorf("unsupported language: %s", lang)

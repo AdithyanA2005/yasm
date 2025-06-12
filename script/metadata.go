@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"os"
 	"strings"
+	"yasm/usercfg"
 )
 
 type Metadata struct {
@@ -80,7 +81,7 @@ func ExtractCommentChar(path string) (string, error) {
 	}
 	firstLine := scanner.Text()
 
-	for _, lang := range GetLanguages() {
+	for _, lang := range usercfg.GetLanguages() {
 		if strings.TrimSpace(firstLine) == strings.TrimSpace(lang.Shebang) {
 			return lang.Comment, nil
 		}

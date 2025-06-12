@@ -2,7 +2,7 @@ package actions
 
 import (
 	"fmt"
-	"yasm/script"
+	"yasm/usercfg"
 
 	"github.com/urfave/cli/v2"
 )
@@ -14,7 +14,7 @@ func listLanguages() *cli.Command {
 		Aliases: []string{"ll"},
 		Action: func(c *cli.Context) error {
 			fmt.Println("Supported languages:")
-			script.PrintLanguagesTable()
+			usercfg.PrintLanguagesTable()
 			return nil
 		},
 	}

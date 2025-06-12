@@ -31,6 +31,10 @@ func Command() *cli.Command {
 
 		Action: func(c *cli.Context) error {
 			scriptName := c.Args().First()
+			if scriptName == "" {
+				return cli.Exit("Please provide a script name.", 1)
+			}
+
 			lang := c.String("lang")
 			return createScript(scriptName, lang)
 		},

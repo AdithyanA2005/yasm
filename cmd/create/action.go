@@ -17,12 +17,6 @@ import (
 // Returns an error if any step fails.
 func createScript(scriptName string, lang string) error {
 	// Validate script name
-	if scriptName == "" {
-		fmt.Println("Please provide a script name.")
-		return nil
-	}
-
-	// Validate script name
 	if err := isValidScriptName(scriptName); err != nil {
 		return err
 	}

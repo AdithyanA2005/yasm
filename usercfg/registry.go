@@ -11,6 +11,24 @@ var (
 	// Default values
 	DefaultEditor     = "nano"
 	DefaultScriptsDir = "scripts"
+	PresetLanguages   = map[string]LanguageDef{
+		"bash": {
+			Shebang: "#!/usr/bin/env bash",
+			Comment: "#",
+		},
+		"python": {
+			Shebang: "#!/usr/bin/env python3",
+			Comment: "#",
+		},
+		"sh": {
+			Shebang: "#!/bin/sh",
+			Comment: "#",
+		},
+		"zsh": {
+			Shebang: "#!/usr/bin/env zsh",
+			Comment: "#",
+		},
+	}
 )
 
 type LanguageDef struct {

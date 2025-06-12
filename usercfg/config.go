@@ -77,26 +77,6 @@ func PrintLoadedConfig() {
 	fmt.Printf("Loaded Config: %+v\n", *loadedConfig)
 }
 
-// Preset languages with default shebangs and comments
-var PresetLanguages = map[string]LanguageDef{
-	"bash": {
-		Shebang: "#!/usr/bin/env bash",
-		Comment: "#",
-	},
-	"python": {
-		Shebang: "#!/usr/bin/env python3",
-		Comment: "#",
-	},
-	"sh": {
-		Shebang: "#!/bin/sh",
-		Comment: "#",
-	},
-	"zsh": {
-		Shebang: "#!/usr/bin/env zsh",
-		Comment: "#",
-	},
-}
-
 func ensureConfigLoaded() {
 	if loadedConfig == nil {
 		InitConfig()
@@ -126,3 +106,4 @@ func PrintLanguagesTable() {
 
 	table.Render()
 }
+

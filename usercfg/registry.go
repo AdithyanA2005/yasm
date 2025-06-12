@@ -7,9 +7,7 @@ var (
 	UserHomeDir   string
 	UserConfigDir string
 	UserEditor    string
-)
 
-const (
 	// Default values
 	DefaultEditor     = "nano"
 	DefaultScriptsDir = "scripts"

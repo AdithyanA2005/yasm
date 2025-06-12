@@ -27,10 +27,7 @@ func Command() *cli.Command {
 			"yasm create --lang <language> <script-name>  Open new script with specified language in editor.\n" +
 			"\n" +
 			"To view available languages, run:\n" +
-			"    yasm --list-languages\n" +
-			"\n" +
-			"To know more about languages, run:\n" +
-			"    yasm config languages",
+			"    yasm config list-languages",
 
 		Action: func(c *cli.Context) error {
 			// Get the script name from the command arguments

@@ -7,8 +7,8 @@ import (
 	"yasm/cmd/create"
 	"yasm/cmd/edit"
 	"yasm/cmd/remove"
+	"yasm/cmd/run"
 	"yasm/config"
-	"yasm/fzf"
 	"yasm/script"
 
 	"github.com/urfave/cli/v2"
@@ -34,8 +34,10 @@ func Execute(args []string) error {
 				Usage:   "Show supported script languages",
 			},
 		},
+		DefaultCommand: "run",
 		Commands: []*cli.Command{
 			create.Command(),
+			run.Command(),
 			edit.Command(),
 			remove.Command(),
 		},
@@ -51,18 +53,6 @@ func Execute(args []string) error {
 				fmt.Println("Supported languages:")
 				script.PrintLanguagesTable()
 				return nil
-			}
-
-			// Fuzzy select a script if no name provided
-			selected, err := fzf.FuzzySelectScript()
-			if err != nil {
-				return err
-			}
-
-			// If a script was selected, print the command to run it
-			// TODO: Use shell integration to make this the next command that is typed in terminal
-			if selected != "" {
-				fmt.Printf("yasm %s\n", selected)
 			}
 
 			return nil

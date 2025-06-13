@@ -3,12 +3,12 @@ package cmd
 import (
 	"fmt"
 	"os"
-	"strings"
 	"yasm/cmd/actions"
 	"yasm/cmd/create"
 	"yasm/cmd/edit"
 	"yasm/cmd/remove"
 	"yasm/cmd/run"
+	"yasm/cmd/shell"
 	"yasm/usercfg"
 
 	"github.com/urfave/cli/v2"
@@ -26,12 +26,6 @@ func Execute(args []string) error {
 			usercfg.InitConfig()
 			return nil
 		},
-		Flags: []cli.Flag{
-			&cli.StringFlag{
-				Name:  "shell",
-				Usage: "Output shell function for injection (bash, zsh, fish)",
-			},
-		},
 		DefaultCommand: "run",
 		Commands: []*cli.Command{
 			create.Command(),
@@ -39,17 +33,8 @@ func Execute(args []string) error {
 			edit.Command(),
 			remove.Command(),
 			actions.Command(),
+			shell.Command(),
 		},
-		Action: func(c *cli.Context) error {
-			// If to run shell setup, do it and exit the program
-			if shell := c.String("shell"); shell != "" {
-				generateShellWrapper(strings.ToLower(shell))
-				os.Exit(0)
-			}
-
-			}
-
-			return nil
 		CommandNotFound: func(c *cli.Context, command string) {
 			fmt.Fprintf(os.Stderr, "Error: '%s' is not a valid command.\n\n", command)
 			cli.ShowAppHelp(c)

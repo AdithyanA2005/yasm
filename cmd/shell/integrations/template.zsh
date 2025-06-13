@@ -1,13 +1,12 @@
-function _yasm_widget() {
+function __yasm_run_injector_widget() {
   local output
-  output="$(go run . run 2>&1)"
+  output="$(yasm run 2>&1)"
   local exit_code=$?
 
-  # Check for ::inject::
-  if [[ $exit_code -eq 0 && "$output" == *"{{INJECT_PREFIX}}"* ]]; then
-    local injected_line
-    injected_line=$(echo "$output" | grep '^{{INJECT_PREFIX}}' | sed 's/^{{INJECT_PREFIX}}//')
-    LBUFFER="$injected_line"
+  # If exited successfully, inject the output into the command line.
+  # else just print the output.
+  if [[ $exit_code -eq 0 ]]; then
+    LBUFFER="$output"
   else
     print -r -- "$output"
   fi
@@ -15,7 +14,6 @@ function _yasm_widget() {
   zle reset-prompt
 }
 
-
-zle -N _yasm_widget
-bindkey '^Y' _yasm_widget
+zle -N __yasm_run_injector_widget
+bindkey '^Y' __yasm_run_injector_widget
 

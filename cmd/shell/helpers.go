@@ -28,8 +28,8 @@ func loadShellScript(shell string) (string, error) {
 }
 
 // sanitize replaces the placeholders in the shell script with the actual values.
+// TODO: Implement this
 func sanitize(input string) string {
-	input = strings.ReplaceAll(input, "{{INJECT_PREFIX}}", InjectPrefix)
-
+	input = strings.ReplaceAll(input, "{{}}", "")
 	return input
 }

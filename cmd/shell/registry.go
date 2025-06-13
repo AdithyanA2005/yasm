@@ -11,6 +11,3 @@ var SupportedShells = map[string]shellDefinition{
 	"zsh":  {Name: "zsh", Script: zshScript},
 	"fish": {Name: "fish", Script: fishScript},
 }
-
-// Special prefix that is used with commands to inject them in user's shell.
-const InjectPrefix = "::yasm-inject::"

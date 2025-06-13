@@ -10,3 +10,4 @@ var SupportedShells = map[string]shellDefinition{
 	"zsh":  {Name: "zsh", Script: zshScript},
 	"fish": {Name: "fish", Script: fishScript},
 }
+const InjectPrefix = "::yasm-inject::"

@@ -15,5 +15,5 @@ function __yasm_run_injector_widget() {
 }
 
 zle -N __yasm_run_injector_widget
-bindkey '^Y' __yasm_run_injector_widget
+bindkey '^G' __yasm_run_injector_widget
 

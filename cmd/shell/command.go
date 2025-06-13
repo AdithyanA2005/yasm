@@ -24,7 +24,7 @@ func Command() *cli.Command {
 			// Show error and usage if no arguments are given
 			if c.Args().Len() == 0 {
 				fmt.Fprintf(os.Stderr, "Error: <shell-name> must be provided.\n\n")
-				cli.ShowSubcommandHelp(c) // show help for the 'create' command
+				cli.ShowSubcommandHelp(c) // show help for the 'shell' command
 				return cli.Exit("", 1)
 			}
 

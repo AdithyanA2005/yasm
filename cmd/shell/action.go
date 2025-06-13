@@ -13,16 +13,12 @@ import (
 func integrateShell(shell string) error {
 	code, err := loadShellScript(shell)
 	if err != nil {
-		supported := getSupportedShellNames()
-
-		msg := fmt.Sprintf(
-			"Error: '%v' is not yet supported by yasm.\n\n"+
-				"For the time being, yasm supports the following shells:\n%s\n"+
-				"Please open an issue in the yasm repo if you'd like to see support for '%v':\n%s\n",
-			shell, formatShellList(supported), shell, utils.RepoUrl,
-		)
-
-		fmt.Fprint(os.Stderr, msg)
+		// If shell is not supported, print error and list supported shells
+		fmt.Fprintf(os.Stderr, "Error: '%v' is not yet supported by yasm.\n\n", shell)
+		fmt.Fprintf(os.Stderr, "Currently supported shells:\n")
+		renderShellTable(os.Stderr)
+		fmt.Fprintf(os.Stderr, "\nPlease open an issue in the yasm repo if you'd like to see support for '%v':\n", shell)
+		fmt.Fprintf(os.Stderr, "%s\n", utils.RepoUrl)
 
 		return cli.Exit("", 1)
 	}
@@ -30,7 +26,6 @@ func integrateShell(shell string) error {
 	fmt.Println(code)
 	return nil
 }
-
 // formatShellList formats a slice of shell names into a human-readable
 // bulleted list, with each shell on its own line prefixed by "  - ".
 func formatShellList(shells []string) string {

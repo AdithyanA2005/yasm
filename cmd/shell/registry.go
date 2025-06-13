@@ -1,13 +1,8 @@
 package shell
 
-type shellDefinition struct {
-	Name   string
-	Script string
-}
-
-// SupportedShells is a map of supported shell names to their embeded integration scripts.
-var SupportedShells = map[string]shellDefinition{
-	"bash": {Name: "bash", Script: bashScript},
-	"zsh":  {Name: "zsh", Script: zshScript},
-	"fish": {Name: "fish", Script: fishScript},
+// SupportedShells is a map of supported shell names to their embedded integration scripts.
+var SupportedShells = map[string]string{
+	"bash": bashScript,
+	"zsh":  zshScript,
+	"fish": fishScript,
 }

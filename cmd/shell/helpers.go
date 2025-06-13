@@ -19,12 +19,12 @@ func getSupportedShells() []string {
 // or an error if unsupported.
 func loadShellScript(shell string) (string, error) {
 	// Get shell definition if it's a supported shell
-	def, ok := SupportedShells[shell]
+	shellScript, ok := SupportedShells[shell]
 	if !ok {
 		return "", fmt.Errorf("unsupported shell: %s", shell)
 	}
 
-	return sanitize(def.Script), nil
+	return sanitize(shellScript), nil
 }
 
 // sanitize replaces the placeholders in the shell script with the actual values.

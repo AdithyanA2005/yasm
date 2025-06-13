@@ -1,3 +1,5 @@
+# === YASM: ZSH shell keybinding setup ===
+
 function __yasm_run_injector_widget() {
   local output
   output="$(yasm run 2>&1)"
@@ -17,3 +19,4 @@ function __yasm_run_injector_widget() {
 zle -N __yasm_run_injector_widget
 bindkey '^G' __yasm_run_injector_widget
 
+# === YASM: ZSH shell keybinding setup ===

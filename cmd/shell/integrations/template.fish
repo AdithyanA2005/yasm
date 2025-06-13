@@ -1,7 +1,7 @@
 # === YASM: Fish shell keybinding setup ===
 
 # Define the function triggered by Ctrl-G
-function __yasm_injector
+function __yasm_run_with_injection
     set -l output (go run . run 2>&1)
     set -l exit_code $status
 
@@ -33,10 +33,10 @@ function __yasm_setup_bindings --on-event fish_prompt
     end
 
     # Bind Ctrl-G using both readable and legacy forms for max compatibility
-    bind -M insert ctrl-g __yasm_injector
-    bind -M insert \cg __yasm_injector
-    bind -M default ctrl-g __yasm_injector
-    bind -M default \cg __yasm_injector
+    bind -M insert ctrl-g __yasm_run_with_injection
+    bind -M insert \cg __yasm_run_with_injection
+    bind -M default ctrl-g __yasm_run_with_injection
+    bind -M default \cg __yasm_run_with_injection
 end
 
 # Trigger the binding setup immediately

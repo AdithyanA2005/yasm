@@ -1,6 +1,6 @@
 # === YASM: ZSH shell keybinding setup ===
 
-function __yasm_run_injector_widget() {
+function __yasm_run_with_injection() {
   local output
   output="$(yasm run 2>&1)"
   local exit_code=$?
@@ -16,7 +16,7 @@ function __yasm_run_injector_widget() {
   zle reset-prompt
 }
 
-zle -N __yasm_run_injector_widget
-bindkey '^G' __yasm_run_injector_widget
+zle -N __yasm_run_with_injection
+bindkey '^G' __yasm_run_with_injection
 
 # === YASM: ZSH shell keybinding setup ===

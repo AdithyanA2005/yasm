@@ -26,12 +26,3 @@ func integrateShell(shell string) error {
 	fmt.Println(code)
 	return nil
 }
-// formatShellList formats a slice of shell names into a human-readable
-// bulleted list, with each shell on its own line prefixed by "  - ".
-func formatShellList(shells []string) string {
-	var result string
-	for _, shell := range shells {
-		result += fmt.Sprintf("  - %s\n", shell)
-	}
-	return result
-}

@@ -5,9 +5,9 @@ import (
 	"strings"
 )
 
-// getSupportedShells returns a slice containing the names of all supported shells.
+// getSupportedShellNames returns a slice containing the names of all supported shells.
 // The order of the shells is not guaranteed.
-func getSupportedShells() []string {
+func getSupportedShellNames() []string {
 	keys := make([]string, 0, len(SupportedShells))
 	for k := range SupportedShells {
 		keys = append(keys, k)

@@ -13,7 +13,7 @@ import (
 func integrateShell(shell string) error {
 	code, err := loadShellScript(shell)
 	if err != nil {
-		supported := getSupportedShells()
+		supported := getSupportedShellNames()
 
 		msg := fmt.Sprintf(
 			"Error: '%v' is not yet supported by yasm.\n\n"+

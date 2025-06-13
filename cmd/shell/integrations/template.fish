@@ -1,97 +1,45 @@
-# function yasm
-#     set tmpfile (mktemp)
-#
-#     # Run command, tee output and capture exit code immediately
-#     command go run . $argv | tee $tmpfile
-#     set exit_code $status
-#
-#     if grep -q "::inject::" $tmpfile
-#         set cmd (grep "::inject::" $tmpfile | sed 's/.*::inject:://')
-#         commandline --replace $cmd
-#         commandline --function repaint
-#     end
-#
-#     rm -f $tmpfile
-#     return $exit_code
-# end
+# === YASM: Fish shell keybinding setup ===
 
-# function yasm
-#     set tmpfile (mktemp)
-#
-#     # Use command substitution to preserve TTY for interactive programs like nvim or fzf
-#     # Duplicate stdout using `tee`, but preserve terminal behavior
-#     command go run . $argv ^ | tee $tmpfile
-#     set exit_code $status
-#
-#     if grep -q "::inject::" $tmpfile
-#         set cmd (grep "::inject::" $tmpfile | sed 's/.*::inject:://')
-#         commandline --replace $cmd
-#         commandline --function repaint
-#     end
-#
-#     rm -f $tmpfile
-#     return $exit_code
-# end
+# Define the function triggered by Ctrl-G
+function __yasm_injector
+    set -l output (go run . run 2>&1)
+    set -l exit_code $status
 
-# function yasm
-#     set tmpfile (mktemp)
-#
-#     # Use 'script' to capture output while preserving TTY
-#     # '-q' = quiet, '-c' = run this command, and output goes to tmpfile
-#     script -q -c "go run . $argv" $tmpfile
-#     set exit_code $status
-#
-#     # Show output from tmpfile (as the command normally would)
-#     # cat $tmpfile
-#
-#     # Check and inject
-#     if grep -q "::inject::" $tmpfile
-#         set cmd (grep "::inject::" $tmpfile | sed 's/.*::inject:://')
-#         commandline --replace $cmd
-#         commandline --function repaint
-#     end
-#
-#     rm -f $tmpfile
-#     return $exit_code
-# end
-#
-# -q – quiet mode (don't echo start message).
-#
-# -e – don’t print the "Script done" message.
-#
-# -f – flush output as it’s written (useful for real-time behavior).
-#
-# -c – the command to run.
+    if test $exit_code -eq 0
+        commandline -r -- "$output"
+    else
+        # Print all lines except the last with newline
+        for i in (seq (math (count $output) - 1))
+            echo $output[$i] >&2
+        end
 
-function yasm
-    set tmpfile (mktemp -t yasm_output.XXXXXX)
+        # Print the last line without a newline because
+        # `commandline -f cancel execute` add extra newline
+        if test (count $output) -gt 0
+            printf '%s' $output[-1] >&2
+        end
 
-    # Run the CLI tool inside a real TTY, and suppress the "Script done" message
-    script -qefc "go run . $argv" $tmpfile
-    set exit_code $status
-    # Repaint regardless (restores visibility)
-
-    commandline --function repaint
-
-    if grep -q "::inject::" $tmpfile
-        set cmd (grep "::inject::" $tmpfile | sed 's/.*::inject:://')
-        echo "CMD: $cmd"
-        commandline --replace $cmd
-        commandline --function repaint
+        # This is to cancel the wait after printing the error
+        commandline -f cancel execute
     end
-
-    # Just in case terminal is left in a bad state
-    if not set -q __fish_initialized
-        echo
-        echo "hell no"
-        echo
-        stty sane
-        commandline --function repaint
-    end
-
-    echo "TMP START"
-    cat $tmpfile
-    echo "TMP END"
-    rm -f $tmpfile
-    return $exit_code
 end
+
+# Function to (re)bind the key
+function __yasm_setup_bindings --on-event fish_prompt
+    # Remove any existing bindings to avoid duplicates
+    for mode in insert default
+        bind -M $mode -e ctrl-g 2>/dev/null
+        bind -M $mode -e \cg 2>/dev/null
+    end
+
+    # Bind Ctrl-G using both readable and legacy forms for max compatibility
+    bind -M insert ctrl-g __yasm_injector
+    bind -M insert \cg __yasm_injector
+    bind -M default ctrl-g __yasm_injector
+    bind -M default \cg __yasm_injector
+end
+
+# Trigger the binding setup immediately
+emit fish_prompt
+
+# === YASM: Fish shell keybinding setup ===

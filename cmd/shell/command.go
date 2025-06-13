@@ -16,12 +16,9 @@ func Command() *cli.Command {
 	return &cli.Command{
 		Name:  "shell",
 		Usage: "Print shell script used to execute yasm",
-		// TODO: Add usage text for the command
 		UsageText: "" +
 			"yasm shell <shell-name>  Print shell script for a particular shell\n" +
-			"\n" +
-			"To view a list of supprted shells, run:\n" +
-			"    yasm actions list-shells",
+			"yasm shell --list        Print a list of supported shells",
 		Flags: []cli.Flag{
 			&cli.BoolFlag{
 				Name:     "list",

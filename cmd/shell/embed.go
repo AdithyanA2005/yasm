@@ -4,11 +4,11 @@ import (
 	_ "embed"
 )
 
-//go:embed integrations/template.bash
+//go:embed templates/template.bash
 var bashScript string
 
-//go:embed integrations/template.zsh
+//go:embed templates/template.zsh
 var zshScript string
 
-//go:embed integrations/template.fish
+//go:embed templates/template.fish
 var fishScript string

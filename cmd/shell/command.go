@@ -2,7 +2,9 @@ package shell
 
 import (
 	"fmt"
+	"io"
 	"os"
+	"yasm/utils"
 
 	"github.com/urfave/cli/v2"
 )
@@ -20,7 +22,21 @@ func Command() *cli.Command {
 			"\n" +
 			"To view a list of supprted shells, run:\n" +
 			"    yasm actions list-shells",
+		Flags: []cli.Flag{
+			&cli.BoolFlag{
+				Name:     "list",
+				Usage:    "See a list of supported shells",
+				Required: false,
+			},
+		},
 		Action: func(c *cli.Context) error {
+			showList := c.Bool("list")
+			if showList {
+				fmt.Println("Supported shells:")
+				renderShellTable(os.Stdout)
+				return nil
+			}
+
 			// Show error and usage if no arguments are given
 			if c.Args().Len() == 0 {
 				fmt.Fprintf(os.Stderr, "Error: <shell-name> must be provided.\n\n")
@@ -34,4 +50,20 @@ func Command() *cli.Command {
 			return integrateShell(shellName)
 		},
 	}
+}
+
+// renderShellTable prints a table of all supported shells to provided writer.
+// It displays the shell names and the total count in the header.
+func renderShellTable(w io.Writer) {
+	noOfSupportedLanguages := len(SupportedShells)
+	headers := []string{fmt.Sprintf("Shells (%d)", noOfSupportedLanguages)}
+	rows := make([][]string, 0, noOfSupportedLanguages)
+
+	// Populate rows with each supported shell name.
+	for shell := range SupportedShells {
+		rows = append(rows, []string{shell})
+	}
+
+	// Render the table to standard output.
+	utils.RenderTable(w, headers, rows)
 }

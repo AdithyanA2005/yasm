@@ -28,7 +28,7 @@ func Command() *cli.Command {
 			"yasm create [options] <script-name>  Open new script with specified language template\n" +
 			"\n" +
 			"To view available languages, run:\n" +
-			"    yasm config list-languages",
+			"    yasm actions list-languages",
 
 		Action: func(c *cli.Context) error {
 			if c.Args().Len() == 0 {

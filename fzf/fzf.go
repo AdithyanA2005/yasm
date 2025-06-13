@@ -67,14 +67,11 @@ func FuzzySelectScript() (string, error) {
 				commentChar = "#" // fallback
 			}
 
-			// commentChar := "#" // fallback
-
 			meta, err := script.ExtractMetadata(fullPath, commentChar)
 			title := meta.Title
 			if err != nil || title == "" {
 				title = ""
 			}
-			fmt.Print(meta.Dependencies)
 
 			displayName := filename
 			if title != "" {

@@ -2,6 +2,7 @@ package shell
 
 import (
 	"fmt"
+	"strings"
 )
 
 // getSupportedShells returns a slice containing the names of all supported shells.
@@ -23,5 +24,12 @@ func loadShellScript(shell string) (string, error) {
 		return "", fmt.Errorf("unsupported shell: %s", shell)
 	}
 
-	return def.Script, nil
+	return sanitize(def.Script), nil
+}
+
+// sanitize replaces the placeholders in the shell script with the actual values.
+func sanitize(input string) string {
+	input = strings.ReplaceAll(input, "{{INJECT_PREFIX}}", InjectPrefix)
+
+	return input
 }

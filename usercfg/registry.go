@@ -13,27 +13,27 @@ var (
 	DefaultScriptsDir = "scripts"
 	PresetLanguages   = map[string]LanguageDef{
 		"bash": {
-			Shebang: "#!/usr/bin/env bash",
+			Shebang: []string{"#!/usr/bin/env bash", "#!/usr/bin/bash"},
 			Comment: "#",
 		},
 		"python": {
-			Shebang: "#!/usr/bin/env python3",
+			Shebang: []string{"#!/usr/bin/env python3"},
 			Comment: "#",
 		},
 		"sh": {
-			Shebang: "#!/bin/sh",
+			Shebang: []string{"#!/bin/sh"},
 			Comment: "#",
 		},
 		"zsh": {
-			Shebang: "#!/usr/bin/env zsh",
+			Shebang: []string{"#!/usr/bin/env zsh"},
 			Comment: "#",
 		},
 	}
 )
 
 type LanguageDef struct {
-	Shebang string `toml:"shebang"`
-	Comment string `toml:"comment"`
+	Shebang []string `toml:"shebang"`
+	Comment string   `toml:"comment"`
 }
 
 type ConfigDef struct {

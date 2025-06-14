@@ -1,6 +1,7 @@
 package script
 
 import (
+	"slices"
 	"strings"
 	"yasm/usercfg"
 )
@@ -10,7 +11,7 @@ import (
 // It compares the shebang string against the Shebang field of each language definition.
 func getLanguageByShebang(shebang string) (lang string, def usercfg.LanguageDef, found bool) {
 	for name, def := range usercfg.GetLanguages() {
-		if def.Shebang == strings.TrimSpace(shebang) {
+		if slices.Contains(def.Shebang, strings.TrimSpace(shebang)) {
 			return name, def, true
 		}
 	}

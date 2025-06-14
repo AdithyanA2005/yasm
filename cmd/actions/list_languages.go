@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"sort"
+	"strings"
 	"yasm/usercfg"
 	"yasm/utils"
 
@@ -27,7 +28,7 @@ func listLanguages() *cli.Command {
 // It retrieves the complete set of languages, builds the table rows, and outputs the table to standard output.
 func renderLanguageTable() {
 	langs := usercfg.GetLanguages()
-	headers := []string{"Language", "Shebang", "Comment"}
+	headers := []string{"Language", "Shebangs", "Comment"}
 	rows := flattenLanguages(langs)
 	utils.RenderTable(os.Stdout, headers, rows)
 }
@@ -45,7 +46,7 @@ func flattenLanguages(langs map[string]usercfg.LanguageDef) [][]string {
 	rows := make([][]string, 0, len(keys))
 	for _, lang := range keys {
 		def := langs[lang]
-		rows = append(rows, []string{lang, def.Shebang, def.Comment})
+		rows = append(rows, []string{lang, strings.Join(def.Shebang, "\n"), def.Comment})
 	}
 	return rows
 }

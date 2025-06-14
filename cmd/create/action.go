@@ -48,8 +48,8 @@ func createScript(scriptName string, lang string) error {
 	}
 	defer file.Close()
 
-	// Generate the script template
-	template := generateScriptTemplate(langDef.Shebang, langDef.Comment, scriptName)
+	// Generate the script template (Uses the first shebang if multiple are defined)
+	template := generateScriptTemplate(langDef.Shebang[0], langDef.Comment, scriptName)
 
 	// Write the template to the script file
 	_, err = file.WriteString(template)

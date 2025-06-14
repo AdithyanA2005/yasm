@@ -27,7 +27,7 @@ func runScript(scriptName string) error {
 	}
 
 	if scriptName != "" {
-		fmt.Printf("yasm %s\n", scriptName)
+		fmt.Printf("%s", scriptName)
 	}
 
 	return nil

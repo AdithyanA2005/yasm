@@ -40,12 +40,14 @@ func FuzzySelect(scripts []string) (string, error) {
 // FuzzySelectScript presents a list of scripts to the user from which
 // user can select one using the fzf fuzzy finder.
 func FuzzySelectScript() (string, error) {
+	// Get all the entries in the scripts directory
 	scriptsDir := usercfg.GetScriptsDir()
 	entries, err := os.ReadDir(scriptsDir)
 	if err != nil {
 		return "", fmt.Errorf("failed to list scripts: %w", err)
 	}
 
+	// If no entries found, print reason return (no error)
 	if len(entries) == 0 {
 		fmt.Println("No scripts found in", scriptsDir)
 		return "", nil
@@ -58,9 +60,9 @@ func FuzzySelectScript() (string, error) {
 	for _, entry := range entries {
 		if entry.Type().IsRegular() {
 			filename := entry.Name()
-			fullPath := filepath.Join(scriptsDir, filename)
+			filePath := filepath.Join(scriptsDir, filename)
 
-			meta, err := script.ExtractMetadata(fullPath)
+			meta, err := script.ExtractMetadata(filePath)
 			title := meta.Title
 			if err != nil || title == "" {
 				title = ""

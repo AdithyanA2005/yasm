@@ -2,9 +2,11 @@ package script
 
 import (
 	"bufio"
-	"log"
+	"fmt"
 	"os"
 	"strings"
+
+	"github.com/urfave/cli/v2"
 )
 
 type Metadata struct {
@@ -15,44 +17,63 @@ type Metadata struct {
 }
 
 func ExtractMetadata(filePath string) (Metadata, error) {
+	// Open the file
 	file, err := os.Open(filePath)
 	if err != nil {
 		return Metadata{}, err
 	}
 	defer file.Close()
 
-	commentChar, err := extractCommentChar(filePath)
-	if err != nil {
-		log.Printf("Failed to detect comment character: %v", err)
-		commentChar = "#" // fallback
-	}
-
 	var md Metadata
-	prefix := commentChar + " @yasm."
+	var prefix string
 
-
+	lineCount := 0
 	scanner := bufio.NewScanner(file)
+
 	for scanner.Scan() {
 		line := scanner.Text()
+		lineCount++
+
+		// Handling the first line of the script
+		if lineCount == 1 {
+			// Ensure that the script contains a shebang
+			if !strings.HasPrefix(line, "#!") {
+				return Metadata{}, cli.Exit("Error: Script does not have a shebang", 1)
+			}
+
+			// Ensure that the shebang is a of a supported language
+			shebang := strings.TrimSpace(line)
+			_, def, found := getLanguageByShebang(shebang)
+			if !found {
+				// TODO: Add some info about extending languages
+				fmt.Fprintf(os.Stderr, "Error: No language config found for shebang '%s' in file '%s'\n", shebang, filePath)
+				return Metadata{}, cli.Exit("", 1)
+			}
+
+			// Set the prefix for metadata lines (<comment> ScriptMetadataPrefix)
+			prefix = fmt.Sprintf("%s %s", def.Comment, ScriptMetadataPrefix)
+			continue
+		}
+
+		// Skip lines that dont start with the prefix
 		if !strings.HasPrefix(line, prefix) {
 			continue
 		}
 
-		// Strip comment prefix
-		line = strings.TrimPrefix(line, prefix)
-
+		// Extract needed metadata from the line
 		switch {
-		case strings.HasPrefix(line, "title "):
-			md.Title = strings.TrimSpace(strings.TrimPrefix(line, "title "))
-		case strings.HasPrefix(line, "description "):
-			md.Description = strings.TrimSpace(strings.TrimPrefix(line, "description "))
-		case strings.HasPrefix(line, "tags "):
-			md.Tags = parseList(strings.TrimSpace(strings.TrimPrefix(line, "tags ")))
-		case strings.HasPrefix(line, "dependencies "):
-			md.Dependencies = parseList(strings.TrimSpace(strings.TrimPrefix(line, "dependencies ")))
+		case strings.HasPrefix(line, prefix+".title "):
+			md.Title = strings.TrimSpace(strings.TrimPrefix(line, prefix+".title "))
+		case strings.HasPrefix(line, prefix+".description "):
+			md.Description = strings.TrimSpace(strings.TrimPrefix(line, prefix+".description "))
+		case strings.HasPrefix(line, prefix+".tags "):
+			md.Tags = parseList(strings.TrimSpace(strings.TrimPrefix(line, prefix+".tags ")))
+		case strings.HasPrefix(line, prefix+".dependencies "):
+			md.Dependencies = parseList(strings.TrimSpace(strings.TrimPrefix(line, prefix+".dependencies ")))
 		}
 	}
 
+	// If there occured it will sent it, else it will return nil for error
 	return md, scanner.Err()
 }
 
@@ -66,27 +87,4 @@ func parseList(raw string) []string {
 		parts[i] = strings.Trim(strings.Trim(p, `"`), " ")
 	}
 	return parts
-}
-
-func extractCommentChar(path string) (string, error) {
-	file, err := os.Open(path)
-	if err != nil {
-		return "", err
-	}
-	defer file.Close()
-
-	scanner := bufio.NewScanner(file)
-	if !scanner.Scan() {
-		return "", nil // empty file
-	}
-	firstLine := scanner.Text()
-
-	_, def, found := getLanguageByShebang(strings.TrimSpace(firstLine))
-
-	if found {
-		return def.Comment, nil
-	}
-
-	// fallback
-	return "#", nil
 }

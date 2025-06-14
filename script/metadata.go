@@ -2,6 +2,7 @@ package script
 
 import (
 	"bufio"
+	"log"
 	"os"
 	"strings"
 	"yasm/usercfg"
@@ -16,12 +17,18 @@ type Metadata struct {
 	Dependencies []string
 }
 
-func ExtractMetadata(filePath string, commentChar string) (Metadata, error) {
+func ExtractMetadata(filePath string) (Metadata, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
 		return Metadata{}, err
 	}
 	defer file.Close()
+
+	commentChar, err := extractCommentChar(filePath)
+	if err != nil {
+		log.Printf("Failed to detect comment character: %v", err)
+		commentChar = "#" // fallback
+	}
 
 	var md Metadata
 	prefix := commentChar + " @yasm."
@@ -68,7 +75,7 @@ func parseList(raw string) []string {
 	return parts
 }
 
-func ExtractCommentChar(path string) (string, error) {
+func extractCommentChar(path string) (string, error) {
 	file, err := os.Open(path)
 	if err != nil {
 		return "", err

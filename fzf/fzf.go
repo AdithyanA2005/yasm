@@ -2,7 +2,6 @@ package fzf
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -61,13 +60,7 @@ func FuzzySelectScript() (string, error) {
 			filename := entry.Name()
 			fullPath := filepath.Join(scriptsDir, filename)
 
-			commentChar, err := script.ExtractCommentChar(fullPath)
-			if err != nil {
-				log.Printf("Failed to detect comment character: %v", err)
-				commentChar = "#" // fallback
-			}
-
-			meta, err := script.ExtractMetadata(fullPath, commentChar)
+			meta, err := script.ExtractMetadata(fullPath)
 			title := meta.Title
 			if err != nil || title == "" {
 				title = ""

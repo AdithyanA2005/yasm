@@ -5,7 +5,6 @@ import (
 	"log"
 	"os"
 	"strings"
-	"yasm/usercfg"
 )
 
 type Metadata struct {
@@ -30,6 +29,7 @@ func ExtractMetadata(filePath string) (Metadata, error) {
 
 	var md Metadata
 	prefix := commentChar + " @yasm."
+
 
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
@@ -81,10 +81,10 @@ func extractCommentChar(path string) (string, error) {
 	}
 	firstLine := scanner.Text()
 
-	for _, lang := range usercfg.GetLanguages() {
-		if strings.TrimSpace(firstLine) == strings.TrimSpace(lang.Shebang) {
-			return lang.Comment, nil
-		}
+	_, def, found := getLanguageByShebang(strings.TrimSpace(firstLine))
+
+	if found {
+		return def.Comment, nil
 	}
 
 	// fallback

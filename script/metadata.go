@@ -60,16 +60,20 @@ func ExtractMetadata(filePath string) (Metadata, error) {
 			continue
 		}
 
+		// Define handlers for each metadata field
+		handlers := map[string]func(string){
+			prefix + ".title ":        func(val string) { md.Title = val },
+			prefix + ".description ":  func(val string) { md.Description = val },
+			prefix + ".tags ":         func(val string) { md.Tags = parseList(val) },
+			prefix + ".dependencies ": func(val string) { md.Dependencies = parseList(val) },
+		}
+
 		// Extract needed metadata from the line
-		switch {
-		case strings.HasPrefix(line, prefix+".title "):
-			md.Title = strings.TrimSpace(strings.TrimPrefix(line, prefix+".title "))
-		case strings.HasPrefix(line, prefix+".description "):
-			md.Description = strings.TrimSpace(strings.TrimPrefix(line, prefix+".description "))
-		case strings.HasPrefix(line, prefix+".tags "):
-			md.Tags = parseList(strings.TrimSpace(strings.TrimPrefix(line, prefix+".tags ")))
-		case strings.HasPrefix(line, prefix+".dependencies "):
-			md.Dependencies = parseList(strings.TrimSpace(strings.TrimPrefix(line, prefix+".dependencies ")))
+		for key, handler := range handlers {
+			if strings.HasPrefix(line, key) {
+				handler(strings.TrimSpace(strings.TrimPrefix(line, key)))
+				break // Found match, skip rest
+			}
 		}
 	}
 

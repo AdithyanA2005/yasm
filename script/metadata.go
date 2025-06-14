@@ -62,10 +62,10 @@ func ExtractMetadata(filePath string) (Metadata, error) {
 
 		// Define handlers for each metadata field
 		handlers := map[string]func(string){
-			prefix + ".title ":        func(val string) { md.Title = val },
-			prefix + ".description ":  func(val string) { md.Description = val },
-			prefix + ".tags ":         func(val string) { md.Tags = parseList(val) },
-			prefix + ".dependencies ": func(val string) { md.Dependencies = parseList(val) },
+			prefix + ".title":        func(val string) { md.Title = val },
+			prefix + ".description":  func(val string) { md.Description = val },
+			prefix + ".tags":         func(val string) { md.Tags = parseList(val) },
+			prefix + ".dependencies": func(val string) { md.Dependencies = parseList(val) },
 		}
 
 		// Extract needed metadata from the line

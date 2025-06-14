@@ -11,8 +11,6 @@ import (
 type Metadata struct {
 	Title        string
 	Description  string
-	HasArguments string
-	Usage        string
 	Tags         []string
 	Dependencies []string
 }
@@ -48,11 +46,6 @@ func ExtractMetadata(filePath string) (Metadata, error) {
 			md.Title = strings.TrimSpace(strings.TrimPrefix(line, "title "))
 		case strings.HasPrefix(line, "description "):
 			md.Description = strings.TrimSpace(strings.TrimPrefix(line, "description "))
-		case strings.HasPrefix(line, "has_arguments "):
-			md.HasArguments = strings.TrimSpace(strings.TrimPrefix(line, "has_arguments "))
-		case strings.HasPrefix(line, "usage "):
-			usageLine := strings.TrimSpace(strings.TrimPrefix(line, "usage "))
-			md.Usage = strings.Trim(usageLine, `"`)
 		case strings.HasPrefix(line, "tags "):
 			md.Tags = parseList(strings.TrimSpace(strings.TrimPrefix(line, "tags ")))
 		case strings.HasPrefix(line, "dependencies "):

@@ -77,18 +77,12 @@ func ExtractMetadata(filePath string) (Metadata, error) {
 		}
 	}
 
-	// If there occured it will sent it, else it will return nil for error
 	return md, scanner.Err()
 }
 
+// parseList splits a raw string into a slice of strings using whitespace as the delimiter.
+// It returns a slice containing each field found in the input string.
 func parseList(raw string) []string {
-	trimmed := strings.Trim(raw, "[]")
-	if trimmed == "" {
-		return nil
-	}
-	parts := strings.Split(trimmed, ",")
-	for i, p := range parts {
-		parts[i] = strings.Trim(strings.Trim(p, `"`), " ")
-	}
-	return parts
+	// Used Fields instead of Split to handle multiple spaces issue
+	return strings.Fields(raw)
 }

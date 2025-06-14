@@ -3,7 +3,7 @@
 __yasm_run_with_injection() {
   # Capture output of yasm run
   local output
-  output="$(go run . run 2>&1)"
+  output="$(yasm run 2>&1)"
   local exit_code=$?
 
   # If success, inject output into command line

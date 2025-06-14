@@ -2,7 +2,7 @@
 
 # Define the function triggered by Ctrl-G
 function __yasm_run_with_injection
-    set -l output (go run . run 2>&1)
+    set -l output (yasm run 2>&1)
     set -l exit_code $status
 
     if test $exit_code -eq 0

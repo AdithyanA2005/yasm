@@ -1,4 +1,4 @@
-module yasm
+module github.com/adithyana2005/yasm
 
 go 1.24.4
 

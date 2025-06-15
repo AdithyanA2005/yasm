@@ -6,8 +6,9 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
-	"yasm/script"
-	"yasm/usercfg"
+
+	"github.com/adithyana2005/yasm/script"
+	"github.com/adithyana2005/yasm/usercfg"
 )
 
 // FuzzySelect presents a list of entries to the user using the fzf fuzzy finder.

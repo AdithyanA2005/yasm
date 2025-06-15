@@ -3,7 +3,8 @@ package main
 import (
 	"fmt"
 	"os"
-	"yasm/cmd"
+
+	"github.com/adithyana2005/yasm/cmd"
 )
 
 func main() {

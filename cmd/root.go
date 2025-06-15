@@ -3,14 +3,14 @@ package cmd
 import (
 	"fmt"
 	"os"
-	"yasm/cmd/actions"
-	"yasm/cmd/create"
-	"yasm/cmd/edit"
-	"yasm/cmd/remove"
-	"yasm/cmd/run"
-	"yasm/cmd/shell"
-	"yasm/usercfg"
 
+	"github.com/adithyana2005/yasm/cmd/actions"
+	"github.com/adithyana2005/yasm/cmd/create"
+	"github.com/adithyana2005/yasm/cmd/edit"
+	"github.com/adithyana2005/yasm/cmd/remove"
+	"github.com/adithyana2005/yasm/cmd/run"
+	"github.com/adithyana2005/yasm/cmd/shell"
+	"github.com/adithyana2005/yasm/usercfg"
 	"github.com/urfave/cli/v2"
 )
 

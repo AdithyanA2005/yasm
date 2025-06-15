@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
-	"yasm/usercfg"
-	"yasm/utils"
+
+	"github.com/adithyana2005/yasm/usercfg"
+	"github.com/adithyana2005/yasm/utils"
 )
 
 // DeleteScript deletes the specified script from the scripts directory.

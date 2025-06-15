@@ -5,7 +5,8 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"yasm/usercfg"
+
+	"github.com/adithyana2005/yasm/usercfg"
 )
 
 // EditScript opens the specified script in the user's configured editor.

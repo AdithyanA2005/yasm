@@ -3,7 +3,8 @@ package usercfg
 import (
 	"maps"
 	"path/filepath"
-	"yasm/utils"
+
+	"github.com/adithyana2005/yasm/utils"
 )
 
 // GetEditor returns the preferred text editor.

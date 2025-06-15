@@ -2,8 +2,8 @@ package run
 
 import (
 	"fmt"
-	"yasm/fzf"
 
+	"github.com/adithyana2005/yasm/fzf"
 	"github.com/urfave/cli/v2"
 )
 

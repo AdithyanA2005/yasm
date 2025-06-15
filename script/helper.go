@@ -3,7 +3,8 @@ package script
 import (
 	"slices"
 	"strings"
-	"yasm/usercfg"
+
+	"github.com/adithyana2005/yasm/usercfg"
 )
 
 // getLanguageByShebang returns the language name, its definition, and a boolean indicating

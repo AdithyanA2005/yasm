@@ -5,7 +5,8 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"yasm/usercfg"
+
+	"github.com/adithyana2005/yasm/usercfg"
 )
 
 // createScript creates a new script file with the specified name and language.

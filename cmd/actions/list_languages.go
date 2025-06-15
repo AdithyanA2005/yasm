@@ -5,9 +5,9 @@ import (
 	"os"
 	"sort"
 	"strings"
-	"yasm/usercfg"
-	"yasm/utils"
 
+	"github.com/adithyana2005/yasm/usercfg"
+	"github.com/adithyana2005/yasm/utils"
 	"github.com/urfave/cli/v2"
 )
 

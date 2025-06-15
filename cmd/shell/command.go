@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"yasm/utils"
 
+	"github.com/adithyana2005/yasm/utils"
 	"github.com/urfave/cli/v2"
 )
 

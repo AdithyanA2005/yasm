@@ -1,6 +1,7 @@
 package run
 
 import (
+	"fmt"
 	"yasm/fzf"
 
 	"github.com/urfave/cli/v2"
@@ -38,7 +39,8 @@ func Command() *cli.Command {
 				return nil
 			} else {
 				scriptName := args[0]
-				return runScript(scriptName)
+				scriptArgs := args[1:] // Remaining args passed to script
+				return runScript(scriptName, scriptArgs)
 			}
 		},
 	}

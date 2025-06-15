@@ -2,6 +2,8 @@ package run
 
 import (
 	"fmt"
+	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 	"yasm/script"
@@ -11,7 +13,7 @@ import (
 // runScript loads a script's metadata, checks for unmet dependencies, and prints
 // a message indicating the script is ready to run. Returns an error if metadata
 // extraction fails or dependencies are missing.
-func runScript(scriptName string) error {
+func runScript(scriptName string, scriptArgs []string) error {
 	// Get the metadata for the script file
 	scriptsDir := usercfg.GetScriptsDir()
 	scriptPath := filepath.Join(scriptsDir, scriptName)
@@ -50,8 +52,20 @@ func runScript(scriptName string) error {
 		return fmt.Errorf("unmet dependencies: %s", strings.Join(missing, ", "))
 	}
 
-	if scriptName != "" {
-		fmt.Printf("%s", scriptName)
+	// Execute the script with arguments
+	cmd := exec.Command(scriptPath, scriptArgs...)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	cmd.Stdin = os.Stdin
+	cmd.Env = os.Environ()
+
+	err = cmd.Run()
+	if err != nil {
+		if exitError, ok := err.(*exec.ExitError); ok {
+			// Don't assume Unix only — use ExitCode()
+			return fmt.Errorf("script exited with code %d", exitError.ExitCode())
+		}
+		return fmt.Errorf("failed to run script: %w", err)
 	}
 
 	return nil

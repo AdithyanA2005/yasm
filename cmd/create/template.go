@@ -13,8 +13,8 @@ func generateScriptTemplate(shebang, comment, name string) string {
 %[2]s YASM CONFIG START >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 %[2]s @yasm.title %[3]s
 %[2]s @yasm.description 
-%[2]s @yasm.tags []
-%[2]s @yasm.dependencies []
+%[2]s @yasm.tags 
+%[2]s @yasm.dependencies 
 %[2]s <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< YASM CONFIG END
 
 %[2]s ################################################

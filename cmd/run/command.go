@@ -1,6 +1,7 @@
 package run
 
 import (
+	"fmt"
 	"yasm/fzf"
 
 	"github.com/urfave/cli/v2"
@@ -18,9 +19,9 @@ func Command() *cli.Command {
 			"yasm run <script-name>  Run the script with specified name",
 
 		Action: func(c *cli.Context) error {
-			scriptName := c.Args().First()
+			args := c.Args().Slice()
 
-			if scriptName == "" {
+			if len(args) == 0 {
 				// Fuzzy select a script if it was not provided as an argument
 				selected, err := fzf.FuzzySelectScript()
 				if err != nil {
@@ -33,10 +34,14 @@ func Command() *cli.Command {
 				}
 
 				// Update scriptName to the selected script
-				scriptName = selected
+				scriptName := selected
+				fmt.Println("yasm run", scriptName)
+				return nil
+			} else {
+				scriptName := args[0]
+				scriptArgs := args[1:] // Remaining args passed to script
+				return runScript(scriptName, scriptArgs)
 			}
-
-			return runScript(scriptName)
 		},
 	}
 }

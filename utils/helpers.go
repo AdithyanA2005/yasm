@@ -3,6 +3,7 @@ package utils
 import (
 	"io"
 	"os"
+	"strings"
 
 	"github.com/jedib0t/go-pretty/v6/table"
 )
@@ -33,4 +34,17 @@ func RenderTable(w io.Writer, headers []string, rows [][]string) {
 	}
 
 	t.Render()
+}
+
+// ExtractAfterSubstring returns the portion of the string s that appears after the first occurrence
+// of the substring substr. If substr is not found in str, it returns an empty string and false.
+// Otherwise, it returns the substring after substr and true.
+func ExtractAfterSubstring(str string, substr string) (string, bool) {
+	index := strings.Index(str, substr)
+	if index == -1 {
+		return "", false
+	}
+
+	// Add length of substr to get the portion after it
+	return str[index+len(substr):], true
 }

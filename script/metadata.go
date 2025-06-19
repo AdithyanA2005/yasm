@@ -6,6 +6,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/adithyana2005/yasm/utils"
 	"github.com/urfave/cli/v2"
 )
 
@@ -34,7 +35,6 @@ func ExtractMetadata(filePath string) (Metadata, error) {
 	defer file.Close()
 
 	var md Metadata
-	var prefix string
 	var commentChar string
 
 	scanner := bufio.NewScanner(file)
@@ -57,33 +57,33 @@ func ExtractMetadata(filePath string) (Metadata, error) {
 		}
 
 		commentChar = def.Comment
-		// Build the metadata prefix, e.g. "# @yasm."
-		prefix = fmt.Sprintf("%s %s", commentChar, ScriptMetadataPrefix)
 	}
 
-	// Map metadata keys to handlers that set fields on the Metadata struct.
-	handlers := map[string]func(string){
-		prefix + ".title":        func(val string) { md.Title = val },
-		prefix + ".description":  func(val string) { md.Description = val },
-		prefix + ".tags":         func(val string) { md.Tags = parseList(val) },
-		prefix + ".dependencies": func(val string) { md.Dependencies = parseList(val) },
+	type Target struct {
+		Key     string
+		Handler func(string)
+	}
+
+	// Map metadata keys to targets that set fields on the Metadata struct.
+	targets := []Target{
+		{Key: ScriptMetadataPrefix + ".title", Handler: func(val string) { md.Title = val }},
+		{Key: ScriptMetadataPrefix + ".description", Handler: func(val string) { md.Description = val }},
+		{Key: ScriptMetadataPrefix + ".tags", Handler: func(val string) { md.Tags = parseList(val) }},
+		{Key: ScriptMetadataPrefix + ".dependencies", Handler: func(val string) { md.Dependencies = parseList(val) }},
 	}
 
 	// Scan each line after the shebang to extract metadata.
 	// Stop when reaching the first non-comment, non-empty line (script body).
+lineLoop:
 	for scanner.Scan() {
 		trimmedLine := strings.TrimSpace(scanner.Text())
 
 		// If the line is a metadata line, process it using the registered handlers.
-		if strings.HasPrefix(trimmedLine, prefix) {
-			// Call the handler for the matching metadata key.
-			for key, handler := range handlers {
-				if strings.HasPrefix(trimmedLine, key) {
-					handler(strings.TrimSpace(strings.TrimPrefix(trimmedLine, key)))
-					break
-				}
+		for _, target := range targets {
+			if value, found := utils.ExtractAfterSubstring(trimmedLine, target.Key); found {
+				target.Handler(strings.TrimSpace(value))
+				continue lineLoop // Continue to the next line after processing
 			}
-			continue // Continue scanning for more metadata lines.
 		}
 
 		// If the line is not empty/whitespace and not a comment,

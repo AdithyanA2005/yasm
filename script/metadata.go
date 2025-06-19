@@ -19,25 +19,25 @@ type Metadata struct {
 
 type Target struct {
 	Key     string
-	Handler func(md Metadata, value string)
+	Handler func(md *Metadata, value string)
 }
 
 var targets = []Target{
 	{
 		Key:     ScriptMetadataPrefix + ".title",
-		Handler: func(md Metadata, value string) { md.Title = value },
+		Handler: func(md *Metadata, value string) { md.Title = value },
 	},
 	{
 		Key:     ScriptMetadataPrefix + ".description",
-		Handler: func(md Metadata, value string) { md.Description = value },
+		Handler: func(md *Metadata, value string) { md.Description = value },
 	},
 	{
 		Key:     ScriptMetadataPrefix + ".tags",
-		Handler: func(md Metadata, value string) { md.Tags = parseList(value) },
+		Handler: func(md *Metadata, value string) { md.Tags = parseList(value) },
 	},
 	{
 		Key:     ScriptMetadataPrefix + ".dependencies",
-		Handler: func(md Metadata, value string) { md.Dependencies = parseList(value) },
+		Handler: func(md *Metadata, value string) { md.Dependencies = parseList(value) },
 	},
 }
 
@@ -92,7 +92,7 @@ lineLoop:
 		// If the line is a metadata line, process it using the registered handlers.
 		for _, target := range targets {
 			if value, found := utils.ExtractAfterSubstring(trimmedLine, target.Key); found {
-				target.Handler(md, strings.TrimSpace(value))
+				target.Handler(&md, strings.TrimSpace(value))
 				continue lineLoop // Continue to the next line after processing
 			}
 		}

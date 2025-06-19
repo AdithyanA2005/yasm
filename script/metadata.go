@@ -17,6 +17,30 @@ type Metadata struct {
 	Dependencies []string
 }
 
+type Target struct {
+	Key     string
+	Handler func(md Metadata, value string)
+}
+
+var targets = []Target{
+	{
+		Key:     ScriptMetadataPrefix + ".title",
+		Handler: func(md Metadata, value string) { md.Title = value },
+	},
+	{
+		Key:     ScriptMetadataPrefix + ".description",
+		Handler: func(md Metadata, value string) { md.Description = value },
+	},
+	{
+		Key:     ScriptMetadataPrefix + ".tags",
+		Handler: func(md Metadata, value string) { md.Tags = parseList(value) },
+	},
+	{
+		Key:     ScriptMetadataPrefix + ".dependencies",
+		Handler: func(md Metadata, value string) { md.Dependencies = parseList(value) },
+	},
+}
+
 // ExtractMetadata reads a script file, determines its language from the shebang,
 // and extracts metadata fields (title, description, tags, dependencies) from
 // specially formatted comment lines at the top of the file.
@@ -59,19 +83,6 @@ func ExtractMetadata(filePath string) (Metadata, error) {
 		commentChar = def.Comment
 	}
 
-	type Target struct {
-		Key     string
-		Handler func(string)
-	}
-
-	// Map metadata keys to targets that set fields on the Metadata struct.
-	targets := []Target{
-		{Key: ScriptMetadataPrefix + ".title", Handler: func(val string) { md.Title = val }},
-		{Key: ScriptMetadataPrefix + ".description", Handler: func(val string) { md.Description = val }},
-		{Key: ScriptMetadataPrefix + ".tags", Handler: func(val string) { md.Tags = parseList(val) }},
-		{Key: ScriptMetadataPrefix + ".dependencies", Handler: func(val string) { md.Dependencies = parseList(val) }},
-	}
-
 	// Scan each line after the shebang to extract metadata.
 	// Stop when reaching the first non-comment, non-empty line (script body).
 lineLoop:
@@ -81,7 +92,7 @@ lineLoop:
 		// If the line is a metadata line, process it using the registered handlers.
 		for _, target := range targets {
 			if value, found := utils.ExtractAfterSubstring(trimmedLine, target.Key); found {
-				target.Handler(strings.TrimSpace(value))
+				target.Handler(md, strings.TrimSpace(value))
 				continue lineLoop // Continue to the next line after processing
 			}
 		}
